@@ -12,13 +12,13 @@ class SessionStarted implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $session;
-    public $code;
+    public array $session;
+    public string $code;
 
-    public function __construct(array $session)
+    public function __construct(\App\Models\GameSession $session)
     {
-        $this->session = $session;
-        $this->code = $session['code'];
+        $this->session = $session->load('questions')->toArray();
+        $this->code = $session->code;
     }
 
     public function broadcastOn()
