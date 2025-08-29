@@ -14,7 +14,7 @@
     <div class="bg-white p-6 rounded-lg shadow-md">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-2xl font-semibold">Game Sessions</h2>
-            <a href="#" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Create New Session</a>
+            <a href="{{ route('admin.sessions.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Create New Session</a>
         </div>
 
         <table class="min-w-full bg-white">
@@ -33,8 +33,8 @@
                         <td class="py-2 px-4 border-b">{{ $session->questions->count() }}</td>
                         <td class="py-2 px-4 border-b">{{ $session->status }}</td>
                         <td class="py-2 px-4 border-b">
-                            <a href="#" class="text-blue-500 hover:underline mr-2">Edit</a>
-                            <form action="#" method="POST" class="inline-block">
+                            <a href="{{ route('admin.sessions.edit', $session->id) }}" class="text-blue-500 hover:underline mr-2">Edit</a>
+                            <form action="{{ route('admin.sessions.destroy', $session->id) }}" method="POST" class="inline-block">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-red-500 hover:underline">Delete</button>
