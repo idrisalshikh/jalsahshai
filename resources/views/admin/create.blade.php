@@ -9,14 +9,18 @@
 <body class="bg-gray-100 text-gray-800">
 
 <div class="container mx-auto p-8">
-    <h1 class="text-3xl font-bold mb-6">Create New Game Session</h1>
+    <h1 class="text-3xl font-bold mb-6">Create New Game</h1>
 
     <div class="bg-white p-6 rounded-lg shadow-md">
-        <form action="{{ route('admin.sessions.store') }}" method="POST">
+        <form action="{{ route('admin.games.store') }}" method="POST">
             @csrf
             <div class="mb-4">
-                <label for="code" class="block text-sm font-medium text-gray-700">Session Code</label>
-                <input type="text" name="code" id="code" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                <label for="name" class="block text-sm font-medium text-gray-700">Game Name</label>
+                <input type="text" name="name" id="name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+            </div>
+            <div class="mb-4">
+                <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                <textarea name="description" id="description" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
             </div>
             <div class="mb-4">
                 <label for="video_url" class="block text-sm font-medium text-gray-700">Video URL</label>

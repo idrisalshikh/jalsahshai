@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('game_question', function (Blueprint $table) {
+        Schema::create('game_sessions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('game_id')->constrained()->onDelete('cascade');
-            $table->foreignId('question_id')->constrained()->onDelete('cascade');
+            $table->string('code')->unique();
+            $table->enum('status', ['waiting', 'started', 'finished'])->default('waiting');
+            $table->unsignedBigInteger('host_id')->nullable();
             $table->timestamps();
         });
     }
@@ -24,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('game_session_question');
+        Schema::dropIfExists('game_sessions');
     }
 };

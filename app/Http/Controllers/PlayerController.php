@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Answer;
 use App\Models\GameSession;
+use App\Models\Player;
+use App\Models\Question;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PlayerController extends Controller
 {
@@ -14,15 +18,41 @@ class PlayerController extends Controller
             'nickname' => 'required|string|max:255',
         ]);
 
-        session(['nickname' => $validated['nickname']]);
+        $session = GameSession::where('code', $validated['code'])->firstOrFail();
 
-        return redirect()->route('play', ['code' => $validated['code']]);
+        $player = DB::transaction(function () use ($session, $validated) {
+            $isHost = is_null($session->host_id);
+
+            $player = $session->players()->create([
+                'nickname' => $validated['nickname'],
+                'is_host' => $isHost,
+            ]);
+
+            if ($isHost) {
+                $session->host_id = $player->id;
+                $session->save();
+            }
+
+            // Broadcast PlayerJoined event
+            event(new \App\Events\PlayerJoined($session->code, $player->nickname));
+
+            return $player;
+        });
+
+        session(['player_id' => $player->id]);
+
+        if ($player->is_host) {
+            return redirect()->route('host.waiting', $session->code);
+        }
+
+        return redirect()->route('play', $session->code);
     }
 
     public function show($code)
     {
-        $session = GameSession::with('questions')->where('code', $code)->firstOrFail();
-        $nickname = session('nickname', 'guest');
+        $session = GameSession::with('game.questions')->where('code', $code)->firstOrFail();
+        $player = Player::findOrFail(session('player_id'));
+        $nickname = $player->nickname;
 
         return view('play', compact('session', 'nickname'));
     }
@@ -35,15 +65,22 @@ class PlayerController extends Controller
         ]);
 
         $session = GameSession::where('code', $code)->firstOrFail();
-        $nickname = session('nickname', 'guest');
+        $player = Player::findOrFail(session('player_id'));
+        $question = Question::findOrFail($validated['question_id']);
+
+        $isCorrect = $question->correct_answer == $validated['answer'];
+
+        if ($isCorrect) {
+            $player->score += 10; // Add 10 points for a correct answer
+            $player->save();
+        }
 
         Answer::create([
-            'game_session_id' => $session->id,
-            'question_id' => $validated['question_id'],
-            'nickname' => $nickname,
+            'player_id' => $player->id,
+            'question_id' => $question->id,
             'answer' => $validated['answer'],
         ]);
 
-        return response()->json(['message' => 'Answer submitted!']);
+        return response()->json(['message' => 'Answer submitted!', 'is_correct' => $isCorrect]);
     }
 }

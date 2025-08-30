@@ -10,13 +10,19 @@ class GameSession extends Model
     use HasFactory;
 
     protected $fillable = [
+        'game_id',
         'code',
-        'video_url',
         'status',
+        'host_id',
     ];
 
-    public function questions()
+    public function game()
     {
-        return $this->belongsToMany(Question::class, 'game_session_question');
+        return $this->belongsTo(Game::class);
+    }
+
+    public function players()
+    {
+        return $this->hasMany(Player::class);
     }
 }

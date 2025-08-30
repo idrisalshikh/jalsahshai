@@ -1,0 +1,77 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\Game;
+use App\Models\GameSession;
+use App\Models\Player;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class PlayerControllerTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_can_join_a_game_session()
+    {
+        $game = Game::factory()->create();
+        $session = $game->sessions()->create(['code' => 'TESTCODE']);
+        $host = $session->players()->create(['nickname' => 'Host', 'is_host' => true]);
+        $session->update(['host_id' => $host->id]);
+
+        $response = $this->post(route('join'), [
+            'code' => 'TESTCODE',
+            'nickname' => 'Player1',
+        ]);
+
+        $response->assertRedirect(route('play', 'TESTCODE'));
+        $this->assertDatabaseHas('players', ['nickname' => 'Player1', 'is_host' => false]);
+    }
+
+    public function test_first_player_to_join_becomes_host()
+    {
+        $game = Game::factory()->create();
+        $session = $game->sessions()->create(['code' => 'TESTCODE']);
+
+        $response = $this->post(route('join'), [
+            'code' => 'TESTCODE',
+            'nickname' => 'HostPlayer',
+        ]);
+
+        $response->assertRedirect(route('host.waiting', 'TESTCODE'));
+        $this->assertDatabaseHas('players', ['nickname' => 'HostPlayer', 'is_host' => true]);
+        $this->assertDatabaseHas('game_sessions', ['id' => $session->id, 'host_id' => Player::where('nickname', 'HostPlayer')->first()->id]);
+    }
+
+    public function test_can_view_play_page()
+    {
+        $game = Game::factory()->create();
+        $session = $game->sessions()->create(['code' => 'TESTCODE']);
+        $player = $session->players()->create(['nickname' => 'Player1']);
+        $this->withSession(['player_id' => $player->id]);
+
+        $response = $this->get(route('play', 'TESTCODE'));
+
+        $response->assertStatus(200);
+        $response->assertViewIs('play');
+        $response->assertViewHas('session');
+    }
+
+    public function test_can_submit_an_answer()
+    {
+        $game = Game::factory()->hasQuestions(1)->create();
+        $session = $game->sessions()->create(['code' => 'TESTCODE']);
+        $player = $session->players()->create(['nickname' => 'Player1']);
+        $question = $game->questions->first();
+        $this->withSession(['player_id' => $player->id]);
+
+        $response = $this->postJson(route('play.answer', 'TESTCODE'), [
+            'question_id' => $question->id,
+            'answer' => '0',
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('answers', ['player_id' => $player->id, 'question_id' => $question->id]);
+    }
+}

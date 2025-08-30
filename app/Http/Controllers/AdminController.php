@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\GameSession;
+use App\Models\Game;
 use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -11,8 +11,8 @@ class AdminController extends Controller
 {
     public function index()
     {
-        $sessions = GameSession::with('questions')->get();
-        return view('admin', compact('sessions'));
+        $games = Game::with('questions')->get();
+        return view('admin', compact('games'));
     }
 
     public function create()
@@ -23,7 +23,8 @@ class AdminController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'code' => 'required|unique:game_sessions,code',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
             'video_url' => 'nullable|url',
             'questions' => 'nullable|array',
             'questions.*.text' => 'required|string',
@@ -33,8 +34,9 @@ class AdminController extends Controller
         ]);
 
         DB::transaction(function () use ($validated) {
-            $session = GameSession::create([
-                'code' => $validated['code'],
+            $game = Game::create([
+                'name' => $validated['name'],
+                'description' => $validated['description'],
                 'video_url' => $validated['video_url'],
             ]);
 
@@ -46,26 +48,27 @@ class AdminController extends Controller
                         'options' => isset($questionData['options']) ? explode(',', $questionData['options']) : null,
                         'correct_answer' => $questionData['correct_answer'],
                     ]);
-                    $session->questions()->attach($question->id);
+                    $game->questions()->attach($question->id);
                 }
             }
         });
 
-        return redirect()->route('admin.index')->with('success', 'Game session created successfully.');
+        return redirect()->route('admin.index')->with('success', 'Game created successfully.');
     }
 
     public function edit($id)
     {
-        $session = GameSession::with('questions')->findOrFail($id);
-        return view('admin.edit', compact('session'));
+        $game = Game::with('questions')->findOrFail($id);
+        return view('admin.edit', compact('game'));
     }
 
     public function update(Request $request, $id)
     {
-        $session = GameSession::findOrFail($id);
+        $game = Game::findOrFail($id);
 
         $validated = $request->validate([
-            'code' => 'required|unique:game_sessions,code,' . $session->id,
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
             'video_url' => 'nullable|url',
             'questions' => 'nullable|array',
             'questions.*.id' => 'nullable|integer',
@@ -75,9 +78,10 @@ class AdminController extends Controller
             'questions.*.correct_answer' => 'required',
         ]);
 
-        DB::transaction(function () use ($session, $validated) {
-            $session->update([
-                'code' => $validated['code'],
+        DB::transaction(function () use ($game, $validated) {
+            $game->update([
+                'name' => $validated['name'],
+                'description' => $validated['description'],
                 'video_url' => $validated['video_url'],
             ]);
 
@@ -107,39 +111,17 @@ class AdminController extends Controller
                 }
             }
 
-            $session->questions()->sync($questionIds);
+            $game->questions()->sync($questionIds);
         });
 
-        return redirect()->route('admin.index')->with('success', 'Game session updated successfully.');
+        return redirect()->route('admin.index')->with('success', 'Game updated successfully.');
     }
 
     public function destroy($id)
     {
-        $session = GameSession::findOrFail($id);
-        $session->delete();
+        $game = Game::findOrFail($id);
+        $game->delete();
 
-        return redirect()->route('admin.index')->with('success', 'Game session deleted successfully.');
-    }
-
-    public function start($id)
-    {
-        $session = GameSession::findOrFail($id);
-        $session->status = 'started';
-        $session->save();
-
-        event(new \App\Events\SessionStarted($session));
-
-        return redirect()->route('admin.index')->with('success', 'Game session started.');
-    }
-
-    public function finish($id)
-    {
-        $session = GameSession::findOrFail($id);
-        $session->status = 'finished';
-        $session->save();
-
-        event(new \App\Events\SessionFinished($session));
-
-        return redirect()->route('admin.index')->with('success', 'Game session finished.');
+        return redirect()->route('admin.index')->with('success', 'Game deleted successfully.');
     }
 }

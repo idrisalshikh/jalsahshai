@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\GameSession;
+use App\Models\Game;
 use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class GameSessionAdminController extends Controller
+class GameAdminController extends Controller
 {
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'code' => 'required|unique:game_sessions,code',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
             'video_url' => 'nullable|url',
             'questions' => 'required|array',
             'questions.*.text' => 'required|string',
@@ -21,9 +22,10 @@ class GameSessionAdminController extends Controller
             'questions.*.correct_answer' => 'required',
         ]);
 
-        $session = DB::transaction(function () use ($validated) {
-            $session = GameSession::create([
-                'code' => $validated['code'],
+        $game = DB::transaction(function () use ($validated) {
+            $game = Game::create([
+                'name' => $validated['name'],
+                'description' => $validated['description'],
                 'video_url' => $validated['video_url'],
             ]);
 
@@ -34,21 +36,22 @@ class GameSessionAdminController extends Controller
                     'options' => $questionData['options'] ?? null,
                     'correct_answer' => $questionData['correct_answer'],
                 ]);
-                $session->questions()->attach($question->id);
+                $game->questions()->attach($question->id);
             }
 
-            return $session;
+            return $game;
         });
 
-        return response()->json($session->load('questions'), 201);
+        return response()->json($game->load('questions'), 201);
     }
 
     public function update(Request $request, $id)
     {
-        $session = GameSession::findOrFail($id);
+        $game = Game::findOrFail($id);
 
         $validated = $request->validate([
-            'code' => 'required|unique:game_sessions,code,' . $session->id,
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
             'video_url' => 'nullable|url',
             'questions' => 'required|array',
             'questions.*.id' => 'nullable|integer',
@@ -58,9 +61,10 @@ class GameSessionAdminController extends Controller
             'questions.*.correct_answer' => 'required',
         ]);
 
-        $session = DB::transaction(function () use ($session, $validated) {
-            $session->update([
-                'code' => $validated['code'],
+        $game = DB::transaction(function () use ($game, $validated) {
+            $game->update([
+                'name' => $validated['name'],
+                'description' => $validated['description'],
                 'video_url' => $validated['video_url'],
             ]);
 
@@ -87,23 +91,18 @@ class GameSessionAdminController extends Controller
                 $questionIds[] = $question->id;
             }
 
-            $session->questions()->sync($questionIds);
+            $game->questions()->sync($questionIds);
 
-            $session->questions()->sync($questionIds);
-
-            // Delete questions that are no longer attached to this session
-            $session->questions()->whereNotIn('questions.id', $questionIds)->delete();
-
-            return $session;
+            return $game;
         });
 
-        return response()->json($session->load('questions'));
+        return response()->json($game->load('questions'));
     }
 
     public function destroy($id)
     {
-        $session = GameSession::findOrFail($id);
-        $session->delete();
+        $game = Game::findOrFail($id);
+        $game->delete();
 
         return response()->json(null, 204);
     }

@@ -10,14 +10,10 @@ use Illuminate\Http\Request;
 
 class GameSessionController extends Controller
 {
-    public function index()
+    public function scores($code)
     {
-        return GameSession::with('questions')->get();
-    }
-
-    public function show($code)
-    {
-        return GameSession::with('questions')->where('code', $code)->firstOrFail();
+        $session = GameSession::with('players')->where('code', $code)->firstOrFail();
+        return $session->players;
     }
 
     public function start($code)

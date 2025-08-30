@@ -4,17 +4,15 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GameSessionController;
 use App\Http\Controllers\GameSessionAdminController;
 
-// Public API
-Route::get('/sessions', [GameSessionController::class, 'index']);
-Route::get('/sessions/{code}', [GameSessionController::class, 'show']);
-Route::post('/sessions/{code}/start', [GameSessionController::class, 'start']);
-Route::post('/sessions/{code}/finish', [GameSessionController::class, 'finish']);
-Route::post('/sessions/{code}/answer', [GameSessionController::class, 'answer']);
+use App\Http\Controllers\PlayerApiController;
 
 // Admin API
 Route::prefix('admin')->group(function () {
-    Route::get('/sessions', [GameSessionController::class, 'index']);
-    Route::post('/sessions', [GameSessionAdminController::class, 'store']);
-    Route::put('/sessions/{id}', [GameSessionAdminController::class, 'update']);
-    Route::delete('/sessions/{id}', [GameSessionAdminController::class, 'destroy']);
+    Route::post('/games', [GameAdminController::class, 'store']);
+    Route::put('/games/{id}', [GameAdminController::class, 'update']);
+    Route::delete('/games/{id}', [GameAdminController::class, 'destroy']);
 });
+
+// Player API
+Route::get('/players/{id}', [PlayerApiController::class, 'show']);
+Route::get('/sessions/{code}/scores', [GameSessionController::class, 'scores']);

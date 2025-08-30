@@ -14,35 +14,27 @@
     <div class="bg-white p-6 rounded-lg shadow-md">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-2xl font-semibold">Game Sessions</h2>
-            <a href="{{ route('admin.sessions.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Create New Session</a>
+            <a href="{{ route('admin.games.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Create New Game</a>
         </div>
 
         <table class="min-w-full bg-white">
             <thead>
                 <tr>
-                    <th class="py-2 px-4 border-b">Code</th>
+                    <th class="py-2 px-4 border-b">Name</th>
+                    <th class="py-2 px-4 border-b">Description</th>
                     <th class="py-2 px-4 border-b">Questions</th>
-                    <th class="py-2 px-4 border-b">Status</th>
                     <th class="py-2 px-4 border-b">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($sessions as $session)
+                @foreach ($games as $game)
                     <tr>
-                        <td class="py-2 px-4 border-b">{{ $session->code }}</td>
-                        <td class="py-2 px-4 border-b">{{ $session->questions->count() }}</td>
-                        <td class="py-2 px-4 border-b">{{ $session->status }}</td>
+                        <td class="py-2 px-4 border-b">{{ $game->name }}</td>
+                        <td class="py-2 px-4 border-b">{{ $game->description }}</td>
+                        <td class="py-2 px-4 border-b">{{ $game->questions->count() }}</td>
                         <td class="py-2 px-4 border-b">
-                            <form action="{{ route('admin.sessions.start', $session->id) }}" method="POST" class="inline-block">
-                                @csrf
-                                <button type="submit" class="text-green-500 hover:underline mr-2">Start</button>
-                            </form>
-                            <form action="{{ route('admin.sessions.finish', $session->id) }}" method="POST" class="inline-block">
-                                @csrf
-                                <button type="submit" class="text-yellow-500 hover:underline mr-2">Finish</button>
-                            </form>
-                            <a href="{{ route('admin.sessions.edit', $session->id) }}" class="text-blue-500 hover:underline mr-2">Edit</a>
-                            <form action="{{ route('admin.sessions.destroy', $session->id) }}" method="POST" class="inline-block">
+                            <a href="{{ route('admin.games.edit', $game->id) }}" class="text-blue-500 hover:underline mr-2">Edit</a>
+                            <form action="{{ route('admin.games.destroy', $game->id) }}" method="POST" class="inline-block">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-red-500 hover:underline">Delete</button>

@@ -17,7 +17,7 @@ class SessionStarted implements ShouldBroadcastNow
 
     public function __construct(\App\Models\GameSession $session)
     {
-        $this->session = $session->load('questions')->toArray();
+        $this->session = $session->load('game.questions')->toArray();
         $this->code = $session->code;
     }
 

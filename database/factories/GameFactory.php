@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\GameSession>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Game>
  */
-class GameSessionFactory extends Factory
+class GameFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,9 +18,9 @@ class GameSessionFactory extends Factory
     public function definition(): array
     {
         return [
-            'code' => Str::upper(Str::random(8)),
+            'name' => $this->faker->words(3, true),
+            'description' => $this->faker->sentence,
             'video_url' => $this->faker->url,
-            'status' => 'waiting',
         ];
     }
 }

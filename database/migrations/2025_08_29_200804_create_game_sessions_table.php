@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('game_sessions', function (Blueprint $table) {
+        Schema::create('games', function (Blueprint $table) {
             $table->id();
-            $table->string('code')->unique();
+            $table->string('name');
+            $table->text('description')->nullable();
             $table->string('video_url')->nullable();
-            $table->enum('status', ['waiting', 'started', 'finished'])->default('waiting');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('game_sessions');
+        Schema::dropIfExists('games');
     }
 };

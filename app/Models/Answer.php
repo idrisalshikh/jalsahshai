@@ -10,15 +10,14 @@ class Answer extends Model
     use HasFactory;
 
     protected $fillable = [
-        'game_session_id',
+        'player_id',
         'question_id',
-        'nickname',
         'answer',
     ];
 
-    public function gameSession()
+    public function player()
     {
-        return $this->belongsTo(GameSession::class);
+        return $this->belongsTo(Player::class);
     }
 
     public function question()

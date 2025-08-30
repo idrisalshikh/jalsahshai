@@ -2,12 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\GameSession;
+use App\Models\Game;
 use App\Models\Question;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class GameSessionSeeder extends Seeder
+class GameSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,10 +15,10 @@ class GameSessionSeeder extends Seeder
     public function run(): void
     {
         DB::transaction(function () {
-            $session = GameSession::create([
-                'code' => 'JALSAH123',
+            $game = Game::create([
+                'name' => 'Jalsah Game',
+                'description' => 'A fun quiz game.',
                 'video_url' => '/video.mp4',
-                'status' => 'waiting',
             ]);
 
             $questions = [
@@ -37,7 +37,7 @@ class GameSessionSeeder extends Seeder
 
             foreach ($questions as $questionData) {
                 $question = Question::create($questionData);
-                $session->questions()->attach($question->id);
+                $game->questions()->attach($question->id);
             }
         });
     }

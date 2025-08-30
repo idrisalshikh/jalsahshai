@@ -23,7 +23,6 @@
     </div>
 
     <div id="questionWrap" class="bg-white p-6 rounded-lg shadow-md" style="display:none;">
-        <h2 id="qText" class="text-2xl font-bold mb-4"></h2>
         <div id="qOptions" class="grid grid-cols-2 gap-4"></div>
     </div>
 
@@ -45,12 +44,15 @@
         const video = document.getElementById('jvideo');
 
         // Subscribe to Echo for real-time events
-        window.Echo.channel('jalsah.' + session.code)
+        window.Echo.channel('jalsah.session.' + session.code)
             .listen('.SessionStarted', (data) => {
                 startVideo(data.session);
             })
             .listen('.SessionFinished', (data) => {
                 showResult();
+            })
+            .listen('.NextQuestion', (e) => {
+                showQuestion(e.questionIndex);
             });
 
         function startVideo(s) {
@@ -121,6 +123,13 @@
             videoWrap.style.display = 'none';
             questionWrap.style.display = 'none';
             resultDiv.style.display = 'block';
+
+            // Fetch final score
+            fetch(`/api/players/${@json(session('player_id'))}`)
+                .then(res => res.json())
+                .then(player => {
+                    resultDiv.innerHTML = `<p class="text-xl">Thank you for playing! Your final score is: ${player.score}</p>`;
+                });
         }
 
         // Initial state

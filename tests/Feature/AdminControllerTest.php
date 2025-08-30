@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\GameSession;
+use App\Models\Game;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -20,18 +20,19 @@ class AdminControllerTest extends TestCase
 
     public function test_can_view_admin_dashboard()
     {
-        GameSession::factory()->count(3)->create();
+        Game::factory()->count(3)->create();
         $response = $this->get(route('admin.index'));
 
         $response->assertStatus(200);
         $response->assertViewIs('admin');
-        $response->assertViewHas('sessions');
+        $response->assertViewHas('games');
     }
 
-    public function test_can_create_a_game_session()
+    public function test_can_create_a_game()
     {
         $data = [
-            'code' => 'NEW_SESSION',
+            'name' => 'New Game',
+            'description' => 'A new game description.',
             'video_url' => 'http://example.com/video.mp4',
             'questions' => [
                 [
@@ -43,20 +44,21 @@ class AdminControllerTest extends TestCase
             ],
         ];
 
-        $response = $this->post(route('admin.sessions.store'), $data);
+        $response = $this->post(route('admin.games.store'), $data);
 
         $response->assertRedirect(route('admin.index'));
-        $this->assertDatabaseHas('game_sessions', ['code' => 'NEW_SESSION']);
+        $this->assertDatabaseHas('games', ['name' => 'New Game']);
         $this->assertDatabaseHas('questions', ['text' => 'Question 1']);
     }
 
-    public function test_can_update_a_game_session()
+    public function test_can_update_a_game()
     {
-        $session = GameSession::factory()->hasQuestions(1)->create();
-        $question = $session->questions->first();
+        $game = Game::factory()->hasQuestions(1)->create();
+        $question = $game->questions->first();
 
         $data = [
-            'code' => 'UPDATED_CODE',
+            'name' => 'Updated Game',
+            'description' => 'An updated description.',
             'video_url' => 'http://example.com/new-video.mp4',
             'questions' => [
                 [
@@ -69,40 +71,20 @@ class AdminControllerTest extends TestCase
             ],
         ];
 
-        $response = $this->put(route('admin.sessions.update', $session->id), $data);
+        $response = $this->put(route('admin.games.update', $game->id), $data);
 
         $response->assertRedirect(route('admin.index'));
-        $this->assertDatabaseHas('game_sessions', ['code' => 'UPDATED_CODE']);
+        $this->assertDatabaseHas('games', ['name' => 'Updated Game']);
         $this->assertDatabaseHas('questions', ['text' => 'Updated Question']);
     }
 
-    public function test_can_delete_a_game_session()
+    public function test_can_delete_a_game()
     {
-        $session = GameSession::factory()->create();
+        $game = Game::factory()->create();
 
-        $response = $this->delete(route('admin.sessions.destroy', $session->id));
+        $response = $this->delete(route('admin.games.destroy', $game->id));
 
         $response->assertRedirect(route('admin.index'));
-        $this->assertDatabaseMissing('game_sessions', ['id' => $session->id]);
-    }
-
-    public function test_can_start_a_game_session()
-    {
-        $session = GameSession::factory()->create(['status' => 'waiting']);
-
-        $response = $this->post(route('admin.sessions.start', $session->id));
-
-        $response->assertRedirect(route('admin.index'));
-        $this->assertDatabaseHas('game_sessions', ['id' => $session->id, 'status' => 'started']);
-    }
-
-    public function test_can_finish_a_game_session()
-    {
-        $session = GameSession::factory()->create(['status' => 'started']);
-
-        $response = $this->post(route('admin.sessions.finish', $session->id));
-
-        $response->assertRedirect(route('admin.index'));
-        $this->assertDatabaseHas('game_sessions', ['id' => $session->id, 'status' => 'finished']);
+        $this->assertDatabaseMissing('games', ['id' => $game->id]);
     }
 }
