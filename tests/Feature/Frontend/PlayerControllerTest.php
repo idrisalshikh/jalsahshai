@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Frontend;
 
 use App\Events\PlayerJoined;
 use App\Models\Game;
@@ -60,7 +60,7 @@ class PlayerControllerTest extends TestCase
         $response = $this->get(route('play', 'TESTCODE'));
 
         $response->assertStatus(200);
-        $response->assertViewIs('play');
+        $response->assertViewIs('frontend.play');
         $response->assertViewHas('session');
         $response->assertSee($game->name);
         $response->assertSee($game->description);

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Frontend;
 
 use App\Events\SessionStarted;
 use App\Models\Game;
@@ -40,7 +40,7 @@ class HostControllerTest extends TestCase
         $response = $this->get(route('host.waiting', $session->code));
 
         $response->assertStatus(200);
-        $response->assertViewIs('host.waiting');
+        $response->assertViewIs('frontend.host.waiting');
         $response->assertViewHas('session');
     }
 

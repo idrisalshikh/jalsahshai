@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Frontend;
 
 use App\Models\Game;
 use App\Models\GameSession;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+
+use App\Http\Controllers\Controller;
 
 class HostController extends Controller
 {
@@ -30,7 +32,7 @@ class HostController extends Controller
     public function waiting($code)
     {
         $session = GameSession::with('game')->where('code', $code)->firstOrFail();
-        return view('host.waiting', compact('session'));
+        return view('frontend.host.waiting', compact('session'));
     }
 
     public function start(Request $request, $code)
@@ -47,7 +49,7 @@ class HostController extends Controller
     public function play($code)
     {
         $session = GameSession::with('game.questions')->where('code', $code)->firstOrFail();
-        return view('host.play', compact('session'));
+        return view('frontend.host.play', compact('session'));
     }
 
     public function next(Request $request, $code)

@@ -1,23 +1,25 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Backend;
 
 use App\Models\Game;
 use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+use App\Http\Controllers\Controller;
+
 class AdminController extends Controller
 {
     public function index()
     {
         $games = Game::with('questions')->get();
-        return view('admin', compact('games'));
+        return view('backend.dashboard', compact('games'));
     }
 
     public function create()
     {
-        return view('admin.create');
+        return view('backend.games.create');
     }
 
     public function store(Request $request)
@@ -59,7 +61,7 @@ class AdminController extends Controller
     public function edit($id)
     {
         $game = Game::with('questions')->findOrFail($id);
-        return view('admin.edit', compact('game'));
+        return view('backend.games.edit', compact('game'));
     }
 
     public function update(Request $request, $id)

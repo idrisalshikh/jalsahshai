@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Frontend;
 
 use App\Models\Answer;
 use App\Models\GameSession;
@@ -8,6 +8,8 @@ use App\Models\Player;
 use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+
+use App\Http\Controllers\Controller;
 
 class PlayerController extends Controller
 {
@@ -53,7 +55,7 @@ class PlayerController extends Controller
         $player = Player::findOrFail(session('player_id'));
         $nickname = $player->nickname;
 
-        return view('play', compact('session', 'nickname'));
+        return view('frontend.play', compact('session', 'nickname'));
     }
 
     public function answer(Request $request, $code)

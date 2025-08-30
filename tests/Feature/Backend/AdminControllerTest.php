@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Backend;
 
 use App\Models\Game;
 use App\Models\User;
@@ -24,7 +24,7 @@ class AdminControllerTest extends TestCase
         $response = $this->get(route('admin.index'));
 
         $response->assertStatus(200);
-        $response->assertViewIs('admin');
+        $response->assertViewIs('backend.dashboard');
         $response->assertViewHas('games');
     }
 

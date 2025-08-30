@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Frontend;
 
 use App\Models\Game;
 use App\Models\User;
@@ -17,7 +17,7 @@ class GameControllerTest extends TestCase
         $response = $this->get(route('games.index'));
 
         $response->assertStatus(200);
-        $response->assertViewIs('games.index');
+        $response->assertViewIs('frontend.games.index');
         $response->assertViewHas('games');
     }
 
@@ -27,7 +27,7 @@ class GameControllerTest extends TestCase
         $response = $this->get(route('games.show', $game->id));
 
         $response->assertStatus(200);
-        $response->assertViewIs('games.show');
+        $response->assertViewIs('frontend.games.show');
         $response->assertViewHas('game');
     }
 }
