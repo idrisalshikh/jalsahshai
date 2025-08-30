@@ -33,6 +33,14 @@
                         <td class="py-2 px-4 border-b">{{ $session->questions->count() }}</td>
                         <td class="py-2 px-4 border-b">{{ $session->status }}</td>
                         <td class="py-2 px-4 border-b">
+                            <form action="{{ route('admin.sessions.start', $session->id) }}" method="POST" class="inline-block">
+                                @csrf
+                                <button type="submit" class="text-green-500 hover:underline mr-2">Start</button>
+                            </form>
+                            <form action="{{ route('admin.sessions.finish', $session->id) }}" method="POST" class="inline-block">
+                                @csrf
+                                <button type="submit" class="text-yellow-500 hover:underline mr-2">Finish</button>
+                            </form>
                             <a href="{{ route('admin.sessions.edit', $session->id) }}" class="text-blue-500 hover:underline mr-2">Edit</a>
                             <form action="{{ route('admin.sessions.destroy', $session->id) }}" method="POST" class="inline-block">
                                 @csrf

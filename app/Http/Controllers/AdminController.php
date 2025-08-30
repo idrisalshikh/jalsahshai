@@ -120,4 +120,26 @@ class AdminController extends Controller
 
         return redirect()->route('admin.index')->with('success', 'Game session deleted successfully.');
     }
+
+    public function start($id)
+    {
+        $session = GameSession::findOrFail($id);
+        $session->status = 'started';
+        $session->save();
+
+        event(new \App\Events\SessionStarted($session));
+
+        return redirect()->route('admin.index')->with('success', 'Game session started.');
+    }
+
+    public function finish($id)
+    {
+        $session = GameSession::findOrFail($id);
+        $session->status = 'finished';
+        $session->save();
+
+        event(new \App\Events\SessionFinished($session));
+
+        return redirect()->route('admin.index')->with('success', 'Game session finished.');
+    }
 }

@@ -85,4 +85,24 @@ class AdminControllerTest extends TestCase
         $response->assertRedirect(route('admin.index'));
         $this->assertDatabaseMissing('game_sessions', ['id' => $session->id]);
     }
+
+    public function test_can_start_a_game_session()
+    {
+        $session = GameSession::factory()->create(['status' => 'waiting']);
+
+        $response = $this->post(route('admin.sessions.start', $session->id));
+
+        $response->assertRedirect(route('admin.index'));
+        $this->assertDatabaseHas('game_sessions', ['id' => $session->id, 'status' => 'started']);
+    }
+
+    public function test_can_finish_a_game_session()
+    {
+        $session = GameSession::factory()->create(['status' => 'started']);
+
+        $response = $this->post(route('admin.sessions.finish', $session->id));
+
+        $response->assertRedirect(route('admin.index'));
+        $this->assertDatabaseHas('game_sessions', ['id' => $session->id, 'status' => 'finished']);
+    }
 }
