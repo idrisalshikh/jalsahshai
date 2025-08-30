@@ -9,6 +9,7 @@ return Application::configure(basePath: dirname(__DIR__))
         using: function (\Illuminate\Routing\Router $router) {
             $router->middleware('web')->group(base_path('routes/frontend/web.php'));
             $router->middleware('web')->prefix('admin')->group(base_path('routes/backend/web.php'));
+            $router->middleware('web')->prefix('test')->group(base_path('routes/test.php'));
 
             $router->middleware('api')->prefix('api/frontend')->name('api.frontend.')->group(base_path('routes/frontend/api.php'));
             $router->middleware('api')->prefix('api/backend')->name('api.backend.')->group(base_path('routes/backend/api.php'));
