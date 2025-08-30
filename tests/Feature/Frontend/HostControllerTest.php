@@ -23,10 +23,14 @@ class HostControllerTest extends TestCase
     public function test_can_host_a_game()
     {
         $game = Game::factory()->create();
-        $response = $this->post(route('host.store'), ['game_id' => $game->id]);
+        $response = $this->post(route('host.store'), [
+            'game_id' => $game->id,
+            'nickname' => 'Test Host',
+        ]);
 
         $response->assertRedirect();
         $this->assertDatabaseHas('game_sessions', ['game_id' => $game->id]);
+        $this->assertDatabaseHas('players', ['nickname' => 'Test Host', 'is_host' => true]);
     }
 
     public function test_can_view_waiting_room()

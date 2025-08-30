@@ -34,21 +34,6 @@ class PlayerControllerTest extends TestCase
         Event::assertDispatched(PlayerJoined::class);
     }
 
-    public function test_first_player_to_join_becomes_host()
-    {
-        $game = Game::factory()->create();
-        $session = $game->sessions()->create(['code' => 'TESTCODE']);
-
-        $response = $this->post(route('join'), [
-            'code' => 'TESTCODE',
-            'nickname' => 'HostPlayer',
-        ]);
-
-        $response->assertRedirect(route('host.waiting', 'TESTCODE'));
-        $this->assertDatabaseHas('players', ['nickname' => 'HostPlayer', 'is_host' => true]);
-        $session->refresh();
-        $this->assertNotNull($session->host_id);
-    }
 
     public function test_can_view_waiting_page()
     {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Models\Game;
 use App\Models\GameSession;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 use App\Http\Controllers\Controller;
@@ -15,18 +16,32 @@ class HostController extends Controller
     {
         $validated = $request->validate([
             'game_id' => 'required|exists:games,id',
+            'nickname' => 'required|string|max:255',
         ]);
 
         $game = Game::findOrFail($validated['game_id']);
 
-        $session = GameSession::create([
-            'game_id' => $game->id,
-            'code' => Str::upper(Str::random(6)),
-            'status' => 'waiting',
-            // host_id will be set when the host joins
-        ]);
+        $sessionData = DB::transaction(function () use ($game, $validated) {
+            $session = GameSession::create([
+                'game_id' => $game->id,
+                'code' => Str::upper(Str::random(6)),
+                'status' => 'waiting',
+            ]);
 
-        return redirect()->route('host.waiting', $session->code);
+            $host = $session->players()->create([
+                'nickname' => $validated['nickname'],
+                'is_host' => true,
+            ]);
+
+            $session->host_id = $host->id;
+            $session->save();
+
+            return ['session' => $session, 'player' => $host];
+        });
+
+        session(['player_id' => $sessionData['player']->id]);
+
+        return redirect()->route('host.waiting', $sessionData['session']->code);
     }
 
     public function waiting($code)

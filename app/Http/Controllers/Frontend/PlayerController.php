@@ -20,33 +20,18 @@ class PlayerController extends Controller
             'nickname' => 'required|string|max:255',
         ]);
 
-        $player = DB::transaction(function () use ($validated) {
-            $session = GameSession::where('code', $validated['code'])->lockForUpdate()->firstOrFail();
-            $isHost = is_null($session->host_id);
+        $session = GameSession::where('code', $validated['code'])->firstOrFail();
 
-            $player = $session->players()->create([
-                'nickname' => $validated['nickname'],
-                'is_host' => $isHost,
-            ]);
+        $player = $session->players()->create([
+            'nickname' => $validated['nickname'],
+            'is_host' => false,
+        ]);
 
-            if ($isHost) {
-                $session->host_id = $player->id;
-                $session->save();
-            }
-
-            // Broadcast PlayerJoined event
-            event(new \App\Events\PlayerJoined($session->code, $player));
-
-            return $player;
-        });
+        event(new \App\Events\PlayerJoined($session->code, $player));
 
         session(['player_id' => $player->id]);
 
-        if ($player->is_host) {
-            return redirect()->route('host.waiting', $validated['code']);
-        }
-
-        return redirect()->route('play', $validated['code']);
+        return redirect()->route('play', $session->code);
     }
 
     public function show($code)

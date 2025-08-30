@@ -17,6 +17,10 @@
             <form action="{{ route('host.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="game_id" value="{{ $game->id }}">
+                <div class="mb-4">
+                    <label for="nickname" class="block text-sm font-medium text-gray-700">Your Nickname</label>
+                    <input type="text" name="nickname" id="nickname" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" required>
+                </div>
                 <button type="submit" class="bg-green-500 text-white px-6 py-3 rounded hover:bg-green-600">Host Game</button>
             </form>
             {{-- <a href="#" class="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600">Play Solo</a> --}}
