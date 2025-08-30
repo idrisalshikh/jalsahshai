@@ -21,13 +21,6 @@
         </div>
     </div>
 
-    <div id="waiting" class="bg-white p-6 rounded-lg shadow-md text-center" style="{{ $session->status !== 'waiting' ? 'display:none;' : '' }}">
-        <p class="text-xl">Waiting for the session to start...</p>
-    </div>
-
-    <div id="videoWrap" class="bg-white p-6 rounded-lg shadow-md" style="{{ $session->status !== 'started' ? 'display:none;' : '' }}">
-        <video id="jvideo" width="100%" controls src="{{ $session->video_url }}"></video>
-    </div>
 
     <div id="questionWrap" class="bg-white p-6 rounded-lg shadow-md" style="display:none;">
         <div id="qOptions" class="grid grid-cols-2 gap-4"></div>

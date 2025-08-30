@@ -55,7 +55,11 @@ class PlayerController extends Controller
         $player = Player::findOrFail(session('player_id'));
         $nickname = $player->nickname;
 
-        return view('frontend.play', compact('session', 'nickname'));
+        if ($session->status === 'waiting') {
+            return view('frontend.player.waiting', compact('session', 'nickname'));
+        }
+
+        return view('frontend.player.play', compact('session', 'nickname'));
     }
 
     public function answer(Request $request, $code)
