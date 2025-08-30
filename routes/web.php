@@ -10,8 +10,12 @@ use App\Http\Controllers\AdminController;
 Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
 Route::get('/admin/sessions/create', [AdminController::class, 'create'])->name('admin.sessions.create');
 Route::post('/admin/sessions', [AdminController::class, 'store'])->name('admin.sessions.store');
+use App\Http\Controllers\PlayerController;
+
 Route::get('/admin/sessions/{id}/edit', [AdminController::class, 'edit'])->name('admin.sessions.edit');
 Route::put('/admin/sessions/{id}', [AdminController::class, 'update'])->name('admin.sessions.update');
 Route::delete('/admin/sessions/{id}', [AdminController::class, 'destroy'])->name('admin.sessions.destroy');
 
-Route::view('/play', 'play');
+Route::post('/join', [PlayerController::class, 'join'])->name('join');
+Route::get('/play/{code}', [PlayerController::class, 'show'])->name('play');
+Route::post('/play/{code}/answer', [PlayerController::class, 'answer'])->name('play.answer');
