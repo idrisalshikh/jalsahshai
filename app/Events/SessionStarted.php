@@ -21,9 +21,11 @@ class SessionStarted implements ShouldBroadcastNow
         $this->code = $session->code;
     }
 
-    public function broadcastOn()
+    public function broadcastOn(): array
     {
-        return new Channel('jalsah.' . $this->code);
+        return [
+            new Channel('jalsah.session.' . $this->code),
+        ];
     }
 
     public function broadcastWith()
