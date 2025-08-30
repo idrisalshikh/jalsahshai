@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Models\Game;
-use App\Models\Question;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-
 use App\Http\Controllers\Controller;
+use App\Models\Game;
+use App\Services\GameService;
+use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
@@ -22,7 +20,7 @@ class AdminController extends Controller
         return view('backend.games.create');
     }
 
-    public function store(Request $request)
+    public function store(Request $request, GameService $gameService)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -31,29 +29,11 @@ class AdminController extends Controller
             'questions' => 'nullable|array',
             'questions.*.text' => 'required|string',
             'questions.*.type' => 'required|in:mcq,true_false',
-            'questions.*.options' => 'nullable|string', // Comma-separated
+            'questions.*.options' => 'nullable|string',
             'questions.*.correct_answer' => 'required',
         ]);
 
-        DB::transaction(function () use ($validated) {
-            $game = Game::create([
-                'name' => $validated['name'],
-                'description' => $validated['description'],
-                'video_url' => $validated['video_url'],
-            ]);
-
-            if (isset($validated['questions'])) {
-                foreach ($validated['questions'] as $questionData) {
-                    $question = Question::create([
-                        'text' => $questionData['text'],
-                        'type' => $questionData['type'],
-                        'options' => isset($questionData['options']) ? explode(',', $questionData['options']) : null,
-                        'correct_answer' => $questionData['correct_answer'],
-                    ]);
-                    $game->questions()->attach($question->id);
-                }
-            }
-        });
+        $gameService->createGame($validated);
 
         return redirect()->route('admin.index')->with('success', 'Game created successfully.');
     }
@@ -64,7 +44,7 @@ class AdminController extends Controller
         return view('backend.games.edit', compact('game'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, GameService $gameService)
     {
         $game = Game::findOrFail($id);
 
@@ -76,45 +56,11 @@ class AdminController extends Controller
             'questions.*.id' => 'nullable|integer',
             'questions.*.text' => 'required|string',
             'questions.*.type' => 'required|in:mcq,true_false',
-            'questions.*.options' => 'nullable|string', // Comma-separated
+            'questions.*.options' => 'nullable|string',
             'questions.*.correct_answer' => 'required',
         ]);
 
-        DB::transaction(function () use ($game, $validated) {
-            $game->update([
-                'name' => $validated['name'],
-                'description' => $validated['description'],
-                'video_url' => $validated['video_url'],
-            ]);
-
-            $questionIds = [];
-            if (isset($validated['questions'])) {
-                foreach ($validated['questions'] as $questionData) {
-                    $options = isset($questionData['options']) ? explode(',', $questionData['options']) : null;
-                    if (isset($questionData['id'])) {
-                        $question = Question::find($questionData['id']);
-                        if ($question) {
-                            $question->update([
-                                'text' => $questionData['text'],
-                                'type' => $questionData['type'],
-                                'options' => $options,
-                                'correct_answer' => $questionData['correct_answer'],
-                            ]);
-                        }
-                    } else {
-                        $question = Question::create([
-                            'text' => $questionData['text'],
-                            'type' => $questionData['type'],
-                            'options' => $options,
-                            'correct_answer' => $questionData['correct_answer'],
-                        ]);
-                    }
-                    $questionIds[] = $question->id;
-                }
-            }
-
-            $game->questions()->sync($questionIds);
-        });
+        $gameService->updateGame($game, $validated);
 
         return redirect()->route('admin.index')->with('success', 'Game updated successfully.');
     }
