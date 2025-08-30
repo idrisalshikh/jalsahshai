@@ -15,16 +15,18 @@ class AnswerSubmitted implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $sessionCode;
-    public $nickname;
+    public $player;
+    public $questionIndex;
     public $answer;
 
     /**
      * Create a new event instance.
      */
-    public function __construct($sessionCode, $nickname, $answer)
+    public function __construct($sessionCode, \App\Models\Player $player, $questionIndex, $answer)
     {
         $this->sessionCode = $sessionCode;
-        $this->nickname = $nickname;
+        $this->player = $player->toArray();
+        $this->questionIndex = $questionIndex;
         $this->answer = $answer;
     }
 

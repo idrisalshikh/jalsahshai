@@ -93,7 +93,7 @@
         window.Echo.channel('jalsah.session.' + session.code)
             .listen('.AnswerSubmitted', (e) => {
                 const answerEl = document.createElement('div');
-                answerEl.innerText = `${e.nickname}: ${e.answer}`;
+                answerEl.innerText = `${e.player.nickname}: ${e.answer}`;
                 answersList.appendChild(answerEl);
             })
             .listen('.SessionFinished', (e) => {

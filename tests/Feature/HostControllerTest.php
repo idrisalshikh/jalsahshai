@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Events\SessionStarted;
 use App\Models\Game;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class HostControllerTest extends TestCase
@@ -50,9 +52,12 @@ class HostControllerTest extends TestCase
             'status' => 'waiting',
         ]);
 
+        Event::fake();
+
         $response = $this->post(route('host.start', $session->code));
 
         $response->assertRedirect(route('host.play', $session->code));
         $this->assertDatabaseHas('game_sessions', ['id' => $session->id, 'status' => 'started']);
+        Event::assertDispatched(SessionStarted::class);
     }
 }

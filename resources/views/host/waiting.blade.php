@@ -38,7 +38,7 @@
         window.Echo.channel('jalsah.session.' + sessionCode)
             .listen('.PlayerJoined', (e) => {
                 const playerEl = document.createElement('div');
-                playerEl.innerText = e.nickname;
+                playerEl.innerText = e.player.nickname;
                 playersList.appendChild(playerEl);
             });
     });

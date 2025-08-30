@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Events\PlayerJoined;
 use App\Models\Game;
 use App\Models\GameSession;
 use App\Models\Player;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class PlayerControllerTest extends TestCase
@@ -20,6 +22,8 @@ class PlayerControllerTest extends TestCase
         $host = $session->players()->create(['nickname' => 'Host', 'is_host' => true]);
         $session->update(['host_id' => $host->id]);
 
+        Event::fake();
+
         $response = $this->post(route('join'), [
             'code' => 'TESTCODE',
             'nickname' => 'Player1',
@@ -27,6 +31,7 @@ class PlayerControllerTest extends TestCase
 
         $response->assertRedirect(route('play', 'TESTCODE'));
         $this->assertDatabaseHas('players', ['nickname' => 'Player1', 'is_host' => false]);
+        Event::assertDispatched(PlayerJoined::class);
     }
 
     public function test_first_player_to_join_becomes_host()
@@ -57,6 +62,8 @@ class PlayerControllerTest extends TestCase
         $response->assertStatus(200);
         $response->assertViewIs('play');
         $response->assertViewHas('session');
+        $response->assertSee($game->name);
+        $response->assertSee($game->description);
     }
 
     public function test_can_submit_an_answer()

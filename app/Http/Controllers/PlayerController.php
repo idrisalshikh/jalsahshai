@@ -33,7 +33,7 @@ class PlayerController extends Controller
             }
 
             // Broadcast PlayerJoined event
-            event(new \App\Events\PlayerJoined($session->code, $player->nickname));
+            event(new \App\Events\PlayerJoined($session->code, $player));
 
             return $player;
         });
@@ -80,7 +80,7 @@ class PlayerController extends Controller
             'answer' => $validated['answer'],
         ]);
 
-        event(new \App\Events\AnswerSubmitted($session->code, $player->nickname, $validated['answer']));
+        event(new \App\Events\AnswerSubmitted($session->code, $player, $session->current_question_index, $validated['answer']));
 
         return response()->json(['message' => 'Answer submitted!', 'is_correct' => $isCorrect]);
     }

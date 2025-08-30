@@ -15,15 +15,15 @@ class PlayerJoined implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $sessionCode;
-    public $nickname;
+    public $player;
 
     /**
      * Create a new event instance.
      */
-    public function __construct($sessionCode, $nickname)
+    public function __construct($sessionCode, \App\Models\Player $player)
     {
         $this->sessionCode = $sessionCode;
-        $this->nickname = $nickname;
+        $this->player = $player->toArray();
     }
 
     /**
