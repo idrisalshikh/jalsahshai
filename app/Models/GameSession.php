@@ -14,6 +14,7 @@ class GameSession extends Model
         'code',
         'status',
         'host_id',
+        'current_question_index',
     ];
 
     public function game()

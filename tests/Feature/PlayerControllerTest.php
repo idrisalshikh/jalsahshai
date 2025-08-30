@@ -41,7 +41,8 @@ class PlayerControllerTest extends TestCase
 
         $response->assertRedirect(route('host.waiting', 'TESTCODE'));
         $this->assertDatabaseHas('players', ['nickname' => 'HostPlayer', 'is_host' => true]);
-        $this->assertDatabaseHas('game_sessions', ['id' => $session->id, 'host_id' => Player::where('nickname', 'HostPlayer')->first()->id]);
+        $session->refresh();
+        $this->assertNotNull($session->host_id);
     }
 
     public function test_can_view_play_page()

@@ -19,10 +19,16 @@
             <h3 class="text-xl font-semibold mb-2">Answers:</h3>
             <!-- Answers will be updated here in real-time -->
         </div>
-        <form action="{{ route('host.next', $session->code) }}" method="POST" class="mt-4">
-            @csrf
-            <button type="submit" class="bg-blue-500 text-white w-full px-6 py-3 rounded hover:bg-blue-600">Next Question</button>
-        </form>
+        <div class="flex space-x-4 mt-4">
+            <form action="{{ route('host.next', $session->code) }}" method="POST" class="flex-1">
+                @csrf
+                <button type="submit" class="bg-blue-500 text-white w-full px-6 py-3 rounded hover:bg-blue-600">Next Question</button>
+            </form>
+            <form action="{{ route('host.stop', $session->code) }}" method="POST" class="flex-1">
+                @csrf
+                <button type="submit" class="bg-red-500 text-white w-full px-6 py-3 rounded hover:bg-red-600">Stop Game</button>
+            </form>
+        </div>
     </div>
 
     <div id="scoreboard" class="bg-white p-6 rounded-lg shadow-md" style="display:none;">
@@ -81,8 +87,15 @@
                 });
         }
 
-        // Echo logic to listen for answers will be added here
+        const answersList = document.getElementById('answers-list');
+
+        // Echo logic to listen for answers
         window.Echo.channel('jalsah.session.' + session.code)
+            .listen('.AnswerSubmitted', (e) => {
+                const answerEl = document.createElement('div');
+                answerEl.innerText = `${e.nickname}: ${e.answer}`;
+                answersList.appendChild(answerEl);
+            })
             .listen('.SessionFinished', (e) => {
                 showScores();
             });

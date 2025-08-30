@@ -11,8 +11,15 @@
 <body class="bg-gray-100 text-gray-800">
 
 <div class="container mx-auto p-8">
-    <h1 class="text-3xl font-bold mb-2">Playing: {{ $session->code }}</h1>
-    <p class="mb-6">Welcome, {{ $nickname }}!</p>
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold mb-2">Playing: {{ $session->code }}</h1>
+            <p class="mb-6">Welcome, {{ $nickname }}!</p>
+        </div>
+        <div>
+            <a href="{{ route('games.index') }}" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Leave Game</a>
+        </div>
+    </div>
 
     <div id="waiting" class="bg-white p-6 rounded-lg shadow-md text-center" style="{{ $session->status !== 'waiting' ? 'display:none;' : '' }}">
         <p class="text-xl">Waiting for the session to start...</p>

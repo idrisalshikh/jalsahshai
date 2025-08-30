@@ -52,12 +52,12 @@ class HostController extends Controller
 
     public function next(Request $request, $code)
     {
-        $session = GameSession::where('code', $code)->firstOrFail();
-        $currentQuestionIndex = session('question_index', 0);
-        $nextQuestionIndex = $currentQuestionIndex + 1;
+        $session = GameSession::with('game.questions')->where('code', $code)->firstOrFail();
+        $nextQuestionIndex = $session->current_question_index + 1;
 
         if ($nextQuestionIndex < $session->game->questions->count()) {
-            session(['question_index' => $nextQuestionIndex]);
+            $session->current_question_index = $nextQuestionIndex;
+            $session->save();
             event(new \App\Events\NextQuestion($session->code, $nextQuestionIndex));
         } else {
             // No more questions, finish the game
@@ -67,5 +67,16 @@ class HostController extends Controller
         }
 
         return back();
+    }
+
+    public function stop(Request $request, $code)
+    {
+        $session = GameSession::where('code', $code)->firstOrFail();
+        $session->status = 'finished';
+        $session->save();
+
+        event(new \App\Events\SessionFinished($session));
+
+        return redirect()->route('host.play', $code);
     }
 }

@@ -18,9 +18,8 @@ class PlayerController extends Controller
             'nickname' => 'required|string|max:255',
         ]);
 
-        $session = GameSession::where('code', $validated['code'])->firstOrFail();
-
-        $player = DB::transaction(function () use ($session, $validated) {
+        $player = DB::transaction(function () use ($validated) {
+            $session = GameSession::where('code', $validated['code'])->lockForUpdate()->firstOrFail();
             $isHost = is_null($session->host_id);
 
             $player = $session->players()->create([
@@ -42,10 +41,10 @@ class PlayerController extends Controller
         session(['player_id' => $player->id]);
 
         if ($player->is_host) {
-            return redirect()->route('host.waiting', $session->code);
+            return redirect()->route('host.waiting', $validated['code']);
         }
 
-        return redirect()->route('play', $session->code);
+        return redirect()->route('play', $validated['code']);
     }
 
     public function show($code)
@@ -80,6 +79,8 @@ class PlayerController extends Controller
             'question_id' => $question->id,
             'answer' => $validated['answer'],
         ]);
+
+        event(new \App\Events\AnswerSubmitted($session->code, $player->nickname, $validated['answer']));
 
         return response()->json(['message' => 'Answer submitted!', 'is_correct' => $isCorrect]);
     }

@@ -29,6 +29,7 @@ Route::get('/host/{code}/waiting', [HostController::class, 'waiting'])->name('ho
 Route::post('/host/{code}/start', [HostController::class, 'start'])->name('host.start');
 Route::get('/host/{code}/play', [HostController::class, 'play'])->name('host.play');
 Route::post('/host/{code}/next', [HostController::class, 'next'])->name('host.next');
+Route::post('/host/{code}/stop', [HostController::class, 'stop'])->name('host.stop');
 
 Route::get('/play/{code}', [PlayerController::class, 'show'])->name('play');
 Route::post('/play/{code}/answer', [PlayerController::class, 'answer'])->name('play.answer');
