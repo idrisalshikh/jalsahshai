@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Session - Jalsah</title>
+    <title>Edit game - Jalsah</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 text-gray-800">
@@ -25,12 +25,12 @@
             </div>
             <div class="mb-4">
                 <label for="video_url" class="block text-sm font-medium text-gray-700">Video URL</label>
-                <input type="text" name="video_url" id="video_url" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" value="{{ $session->video_url }}">
+                <input type="text" name="video_url" id="video_url" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" value="{{ $game->video_url }}">
             </div>
 
             <h3 class="text-xl font-semibold mb-4 mt-6">Questions</h3>
             <div id="questions-container">
-                @foreach ($session->questions as $index => $question)
+                @foreach ($game->questions as $index => $question)
                     <div class="border p-4 rounded-md mb-4">
                         <input type="hidden" name="questions[{{ $index }}][id]" value="{{ $question->id }}">
                         <div class="flex justify-end">
@@ -73,7 +73,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         const addQuestionButton = document.getElementById('add-question');
         const questionsContainer = document.getElementById('questions-container');
-        let questionIndex = {{ $session->questions->count() }};
+        let questionIndex = {{ $game->questions->count() }};
 
         addQuestionButton.addEventListener('click', function () {
             const questionHtml = `

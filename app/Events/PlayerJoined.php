@@ -14,18 +14,27 @@ class PlayerJoined implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $sessionCode;
+   public $sessionCode;
     public $player;
 
     /**
      * Create a new event instance.
      */
-    public function __construct($sessionCode, \App\Models\Player $player)
+    public function __construct($id,$player)
     {
-        $this->sessionCode = $sessionCode;
-        $this->player = $player->toArray();
+        $this->sessionCode = $id;
+       $this->player = $player;
+        
     }
 
+     public function broadcastWith()
+    {
+        return [
+            'id' => (string) $this->player->id,
+            'name' => $this->player->nickname,
+            'score' => $this->player->score
+        ];
+    }
     /**
      * Get the channels the event should broadcast on.
      *
@@ -34,12 +43,12 @@ class PlayerJoined implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new Channel('jalsah.session.' . $this->sessionCode),
+            new Channel('game-' . $this->sessionCode),
         ];
     }
 
     public function broadcastAs()
     {
-        return 'PlayerJoined';
+        return 'player.joined';
     }
 }

@@ -10,24 +10,31 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class AnswerSubmitted implements ShouldBroadcastNow
+class ShowAnswersResult implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $sessionCode;
-    public $player;
-    public $questionIndex;
-    public $answer;
+    public $question;
 
     /**
      * Create a new event instance.
      */
-    public function __construct($sessionCode, \App\Models\Player $player, $questionIndex, $answer)
+    public function __construct($sessionCode, $question)
     {
         $this->sessionCode = $sessionCode;
-        $this->player = $player->toArray();
-        $this->questionIndex = $questionIndex;
-        $this->answer = $answer;
+        $this->question = $question;
+    }
+
+
+
+ public function broadcastWith()
+    {
+        return [
+            'id' =>  $this->question->id,
+            'text' => $this->question->text,
+            'options' => $this->question->options
+        ];
     }
 
     /**
@@ -44,6 +51,6 @@ class AnswerSubmitted implements ShouldBroadcastNow
 
     public function broadcastAs()
     {
-        return 'AnswerSubmitted';
+        return 'show.answers.result';
     }
 }

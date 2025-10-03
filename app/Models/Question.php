@@ -22,6 +22,12 @@ class Question extends Model
 
     public function gameSessions()
     {
-        return $this->belongsToMany(GameSession::class, 'game_session_question');
+        return $this->belongsToMany(GameSession::class, 'game_session_question')
+        ->withPivot(['shown_at', 'closed_at'])
+                    ->withTimestamps();
+    }
+    
+    public function answers() {
+        return $this->hasMany(PlayerAnswer::class);
     }
 }

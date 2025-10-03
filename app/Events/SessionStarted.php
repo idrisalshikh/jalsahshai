@@ -24,7 +24,7 @@ class SessionStarted implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new Channel('jalsah.session.' . $this->code),
+            new Channel('game-' . $this->code),
         ];
     }
 
@@ -35,6 +35,6 @@ class SessionStarted implements ShouldBroadcastNow
 
     public function broadcastAs()
     {
-        return 'SessionStarted';
+        return 'session.started';
     }
 }

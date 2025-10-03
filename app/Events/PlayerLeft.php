@@ -34,7 +34,7 @@ class PlayerLeft implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new Channel('jalsah.session.' . $this->sessionCode),
+            new Channel('game-' . $this->sessionCode),
         ];
     }
 

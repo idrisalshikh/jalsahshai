@@ -1,29 +1,27 @@
 <?php
+
 namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
-class SessionFinished implements ShouldBroadcastNow
+class LeaderboardUpdated implements ShouldBroadcastNow
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use InteractsWithSockets, SerializesModels;
 
-    
     public $players;
     public $sessionId;
 
     public function __construct(Collection $players, $sessionId)
     {
-        Log::info('game.finished event');
         $this->players = $players;
         $this->sessionId = $sessionId;
-        Log::info('game.finished event  ' . $players->count() . ' players.');
+        Log::info('LeaderboardUpdated event created with ' . $players->count() . ' players.');
     }
 
     public function broadcastOn()
@@ -42,10 +40,8 @@ class SessionFinished implements ShouldBroadcastNow
         ];
     })->values()->toArray();
     }
-    
-
     public function broadcastAs()
     {
-        return 'game.finished';
+        return 'leaderboard.updated';
     }
 }

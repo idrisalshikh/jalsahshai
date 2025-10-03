@@ -5,16 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class GameSession extends Model
+class GameSessionQuestion extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'game_id',
-        'code',
-        'status',
-        'host_id',
-        'current_question_index',
+        'game_session_id',
+        'question_id',
+        'shown_at',
+        'closed_at',
+        
+    ];
+     protected $casts = [
+        'shown_at' => 'datetime',
+        'closed_at' => 'datetime',
     ];
 
     public function game()

@@ -58,6 +58,7 @@ class GameService
                         }
                     } else {
                         $question = Question::create([
+                            'game_id' => $game->id,
                             'text' => $questionData['text'],
                             'type' => $questionData['type'],
                             'options' => $options,

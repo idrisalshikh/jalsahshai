@@ -15,15 +15,26 @@ class NextQuestion implements ShouldBroadcastNow
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $sessionCode;
-    public $questionIndex;
+    public $question;
 
     /**
      * Create a new event instance.
      */
-    public function __construct($sessionCode, $questionIndex)
+    public function __construct($sessionCode, $question)
     {
         $this->sessionCode = $sessionCode;
-        $this->questionIndex = $questionIndex;
+        $this->question = $question;
+    }
+
+
+
+ public function broadcastWith()
+    {
+        return [
+            'id' =>  $this->question->id,
+            'text' => $this->question->text,
+            'options' => $this->question->options
+        ];
     }
 
     /**
@@ -34,12 +45,12 @@ class NextQuestion implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new Channel('jalsah.session.' . $this->sessionCode),
+            new Channel('game-' . $this->sessionCode),
         ];
     }
 
     public function broadcastAs()
     {
-        return 'NextQuestion';
+        return 'question.show';
     }
 }
