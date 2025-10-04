@@ -69,6 +69,7 @@
         <table class="min-w-full bg-white">
             <thead class="bg-gray-50">
                 <tr>
+                    <th class="py-3 px-4 border-b font-medium text-left">id</th>
                     <th class="py-3 px-4 border-b font-medium text-left">Name</th>
                     <th class="py-3 px-4 border-b font-medium text-left">Description</th>
                     <th class="py-3 px-4 border-b font-medium text-center">Questions</th>
@@ -80,6 +81,7 @@
             <tbody>
                 @forelse ($games as $game)
                     <tr class="hover:bg-gray-50">
+                        <td class="py-3 px-4 border-b">{{ $game->id }}</td>
                         <td class="py-3 px-4 border-b">
                             <div>
                                 <div class="font-medium">{{ $game->name }}</div>

@@ -38,7 +38,7 @@ class AdminController extends Controller
         $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
         $path = $file->storeAs($directory, $filename, 'public');
 
-        return $path ? ('storage/' . $path) : null;
+        return $path ? ( $path) : null;
     }
 
     /**
@@ -177,24 +177,52 @@ class AdminController extends Controller
 
             // Process game thumbnail upload
             if ($request->hasFile('thumbnail')) {
-                $validatedData['thumbnail'] = $this->processFileUpload($request->file('thumbnail'), 'game-thumbnails');
-                // Optionally delete old thumbnail if exists
-                if ($game->thumbnail && \Illuminate\Support\Facades\Storage::disk('public')->exists($game->thumbnail)) {
-                    \Illuminate\Support\Facades\Storage::disk('public')->delete($game->thumbnail);
+                // Store old thumbnail path for cleanup after successful upload
+                $oldGameThumbnail = $game->thumbnail;
+
+                // Upload new thumbnail
+                $newThumbnailPath = $this->processFileUpload($request->file('thumbnail'), 'game-thumbnails');
+
+                if ($newThumbnailPath) {
+                    $validatedData['thumbnail'] = $newThumbnailPath;
+
+                    // Delete old thumbnail if it exists and is different from new one
+                    if ($oldGameThumbnail && $oldGameThumbnail !== $newThumbnailPath && Storage::disk('public')->exists($oldGameThumbnail)) {
+                        Storage::disk('public')->delete($oldGameThumbnail);
+                    }
                 }
+            } else {
+                // No new thumbnail uploaded, preserve existing one
+                $validatedData['thumbnail'] = $game->thumbnail;
             }
 
             // Process question thumbnails and set time limits for timed questions
             if (isset($validatedData['questions'])) {
                 foreach ($validatedData['questions'] as $index => &$questionData) {
                     if ($request->hasFile("questions.{$index}.thumbnail")) {
-                        $questionData['thumbnail'] = $this->processFileUpload($request->file("questions.{$index}.thumbnail"), 'question-thumbnails');
-                        // Optionally delete old thumbnail if exists
+                        // Store old thumbnail path for cleanup after successful upload
+                        $oldQuestionThumbnail = null;
                         if (isset($questionData['id'])) {
                             $existingQuestion = \App\Models\Question::find($questionData['id']);
-                            if ($existingQuestion && $existingQuestion->thumbnail && \Illuminate\Support\Facades\Storage::disk('public')->exists($existingQuestion->thumbnail)) {
-                                \Illuminate\Support\Facades\Storage::disk('public')->delete($existingQuestion->thumbnail);
+                            $oldQuestionThumbnail = $existingQuestion ? $existingQuestion->thumbnail : null;
+                        }
+
+                        // Upload new thumbnail
+                        $newThumbnailPath = $this->processFileUpload($request->file("questions.{$index}.thumbnail"), 'question-thumbnails');
+
+                        if ($newThumbnailPath) {
+                            $questionData['thumbnail'] = $newThumbnailPath;
+
+                            // Delete old thumbnail if it exists and is different from new one
+                            if ($oldQuestionThumbnail && $oldQuestionThumbnail !== $newThumbnailPath && Storage::disk('public')->exists($oldQuestionThumbnail)) {
+                                Storage::disk('public')->delete($oldQuestionThumbnail);
                             }
+                        }
+                    } else {
+                        // No new thumbnail uploaded, preserve existing one if question has an ID
+                        if (isset($questionData['id'])) {
+                            $existingQuestion = \App\Models\Question::find($questionData['id']);
+                            $questionData['thumbnail'] = $existingQuestion ? $existingQuestion->thumbnail : null;
                         }
                     }
                 }

@@ -36,21 +36,21 @@ class GameService
 
                 if (isset($validatedData['questions']) && count($validatedData['questions']) > 0) {
                     foreach ($validatedData['questions'] as $questionData) {
-                        // Convert options from array to comma-separated string for storage
+                        // Prepare options as array for JSON storage
                         $options = null;
                         if (isset($questionData['options'])) {
                             if (is_array($questionData['options'])) {
-                                // Filter out empty options
-                                $filteredOptions = array_filter($questionData['options'], function($option) {
+                                // Filter out empty options and keep as array for JSON storage
+                                $options = array_filter($questionData['options'], function($option) {
                                     return trim($option) !== '';
                                 });
-                                $options = implode(',', $filteredOptions);
                             } else {
                                 $options = $questionData['options'];
                             }
                         }
 
                         $question = Question::create([
+                            "game_id" => $game->id,
                             'text' => $questionData['text'],
                             'type' => $questionData['type'],
                             'options' => $options,
@@ -97,15 +97,14 @@ class GameService
                 $questionIds = [];
                 if (isset($validatedData['questions']) && count($validatedData['questions']) > 0) {
                     foreach ($validatedData['questions'] as $questionData) {
-                        // Convert options from array to comma-separated string for storage
+                        // Prepare options as array for JSON storage
                         $options = null;
                         if (isset($questionData['options'])) {
                             if (is_array($questionData['options'])) {
-                                // Filter out empty options
-                                $filteredOptions = array_filter($questionData['options'], function($option) {
+                                // Filter out empty options and keep as array for JSON storage
+                                $options = array_filter($questionData['options'], function($option) {
                                     return trim($option) !== '';
                                 });
-                                $options = implode(',', $filteredOptions);
                             } else {
                                 $options = $questionData['options'];
                             }
