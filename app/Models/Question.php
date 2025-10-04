@@ -10,10 +10,13 @@ class Question extends Model
     use HasFactory;
 
     protected $fillable = [
+        'game_id',
         'text',
         'type',
         'options',
         'correct_answer',
+        'thumbnail',
+        'time_limit',
     ];
 
     protected $casts = [
