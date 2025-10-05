@@ -8,16 +8,16 @@
 </head>
 <body class="bg-gray-100 text-gray-800">
 
-<div class="container mx-auto p-8">
-    <div class="mb-6">
-        <h1 class="text-3xl font-bold">Create New Game</h1>
-        <p class="text-gray-600 mt-1">Create a new quiz game with multiple questions.</p>
+<div class="container mx-auto p-4 max-w-4xl">
+    <div class="mb-4">
+        <h1 class="text-2xl font-bold">Create New Game</h1>
+        <p class="text-gray-600 text-sm">Create a quiz game with multiple questions.</p>
     </div>
 
     @if ($errors->any())
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+        <div class="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded mb-4 text-sm">
             <strong>Please fix the following errors:</strong>
-            <ul class="mt-2 list-disc list-inside">
+            <ul class="mt-1 list-disc list-inside space-y-1">
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -26,87 +26,70 @@
     @endif
 
     @if(session('error'))
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+        <div class="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded mb-4 text-sm">
             {{ session('error') }}
         </div>
     @endif
 
-    <div class="bg-white p-6 rounded-lg shadow-md">
+    <div class="bg-white p-4 rounded-lg shadow-md">
         <form action="{{ route('admin.games.store') }}" method="POST" enctype="multipart/form-data" id="game-form">
             @csrf
 
             <!-- Game Basic Information -->
-            <div class="mb-8">
-                <h2 class="text-xl font-semibold mb-4 flex items-center">
-                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-medium">Step 1</span>
-                    <span class="ml-3">Game Information</span>
+            <div class="mb-4">
+                <h2 class="text-lg font-semibold mb-3 flex items-center">
+                    <span class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded text-xs font-medium">1</span>
+                    <span class="ml-2">Game Info</span>
                 </h2>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="md:col-span-2">
-                        <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-                            Game Name <span class="text-red-500">*</span>
-                        </label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2 space-y-1">
+                        <label for="name" class="block text-sm font-medium text-gray-700">Game Name <span class="text-red-500">*</span></label>
                         <input type="text"
                                name="name"
                                id="name"
                                value="{{ old('name') }}"
-                               class="form-input w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('name') border-red-500 @enderror"
-                               placeholder="Enter a descriptive name for your quiz"
+                               class="form-input w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:ring-1 focus:ring-blue-500 @error('name') border-red-500 @enderror"
+                               placeholder="Quiz name"
                                required>
-                        @error('name')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+                        @error('name')<p class="text-sm text-red-600">{{ $message }}</p>@enderror
                     </div>
 
-                    <div class="md:col-span-2">
-                        <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
-                            Description
-                        </label>
+                    <div class="md:col-span-2 space-y-1">
+                        <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
                         <textarea name="description"
                                   id="description"
-                                  rows="3"
-                                  class="form-textarea w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('description') border-red-500 @enderror"
-                                  placeholder="Provide a brief description of what this quiz covers"
-                                  >{{ old('description') }}</textarea>
-                        @error('description')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                        <p class="text-xs text-gray-500 mt-1">Optional description to help players understand the quiz topic.</p>
+                                  rows="2"
+                                  class="form-textarea w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:ring-1 focus:ring-blue-500 @error('description') border-red-500 @enderror"
+                                  placeholder="Brief quiz description">{{ old('description') }}</textarea>
+                        @error('description')<p class="text-sm text-red-600">{{ $message }}</p>@enderror
+                        <p class="text-xs text-gray-500">Optional quiz description</p>
                     </div>
 
-                    <div class="md:col-span-2">
-                        <label for="thumbnail" class="block text-sm font-medium text-gray-700 mb-2">
-                            Thumbnail Image
-                        </label>
+                    <div class="space-y-1">
+                        <label for="thumbnail" class="block text-sm font-medium text-gray-700">Game Thumbnail</label>
                         <input type="file"
                                name="thumbnail"
                                id="thumbnail"
                                accept="image/*"
-                               class="form-input w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('thumbnail') border-red-500 @enderror">
-                        <div id="thumbnail-preview" class="mt-2 hidden">
-                            <img id="thumbnail-image" class="max-w-xs max-h-32 object-cover rounded-md border border-gray-300" alt="Game thumbnail preview">
+                               class="form-input w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:ring-1 focus:ring-blue-500 @error('thumbnail') border-red-500 @enderror">
+                        <div id="thumbnail-preview" class="mt-1 hidden">
+                            <img id="thumbnail-image" class="max-w-24 max-h-16 object-cover rounded border border-gray-300" alt="Game thumbnail">
                         </div>
-                        @error('thumbnail')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                        <p class="text-xs text-gray-500 mt-1">Optional thumbnail image for the game (max 2MB, JPG/PNG/GIF).</p>
+                        @error('thumbnail')<p class="text-sm text-red-600">{{ $message }}</p>@enderror
+                        <p class="text-xs text-gray-500">Optional image (max 2MB)</p>
                     </div>
 
-                    <div class="md:col-span-2">
-                        <label for="video_url" class="block text-sm font-medium text-gray-700 mb-2">
-                            Video URL
-                        </label>
+                    <div class="space-y-1">
+                        <label for="video_url" class="block text-sm font-medium text-gray-700">Video URL</label>
                         <input type="url"
                                name="video_url"
                                id="video_url"
                                value="{{ old('video_url') }}"
-                               class="form-input w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('video_url') border-red-500 @enderror"
-                               placeholder="https://example.com/your-video.mp4">
-                        @error('video_url')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                        <p class="text-xs text-gray-500 mt-1">Optional video to show before the quiz starts.</p>
+                               class="form-input w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:ring-1 focus:ring-blue-500 @error('video_url') border-red-500 @enderror"
+                               placeholder="https://example.com/video.mp4">
+                        @error('video_url')<p class="text-sm text-red-600">{{ $message }}</p>@enderror
+                        <p class="text-xs text-gray-500">Optional intro video</p>
                     </div>
 
                     <div class="md:col-span-2">
@@ -119,58 +102,51 @@
                                    class="form-checkbox h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                             <span class="ml-2 text-sm font-medium text-gray-700">Enable timed questions</span>
                         </label>
-                        @error('is_timed')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                        <p class="text-xs text-gray-500 mt-1">When enabled, you can set time limits for each question (30 seconds default).</p>
+                        <p class="text-xs text-gray-500 mt-0.5">Add time limits to questions (30s default)</p>
                     </div>
                 </div>
             </div>
 
             <!-- Questions Section -->
-            <div class="mb-8">
-                <h2 class="text-xl font-semibold mb-4 flex items-center">
-                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-medium">Step 2</span>
-                    <span class="ml-3">Questions</span>
+            <div class="mb-4">
+                <h2 class="text-lg font-semibold mb-3 flex items-center">
+                    <span class="bg-green-100 text-green-800 px-1.5 py-0.5 rounded text-xs font-medium">2</span>
+                    <span class="ml-2">Questions</span>
                     <span class="ml-auto text-sm text-gray-500">
                         Questions: <span id="questions-count" class="font-medium">0</span>
                     </span>
                 </h2>
 
-                <div id="questions-container" class="space-y-4">
+                <div id="questions-container" class="space-y-3">
                     <!-- Questions will be added here dynamically -->
                     @if(old('questions'))
                         @foreach(old('questions') as $index => $question)
-                            <div class="question-item border border-gray-200 rounded-lg p-4 bg-gray-50">
-                                <div class="flex justify-between items-start mb-4">
-                                    <h4 class="font-medium">Question {{ (int)$index + 1 }}</h4>
-                                    <button type="button" class="remove-question text-red-500 hover:text-red-700">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="question-item border border-gray-200 rounded p-3 bg-gray-50">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h4 class="font-medium text-sm">Question {{ (int)$index + 1 }}</h4>
+                                    <button type="button" class="remove-question text-red-500 hover:text-red-700 p-1">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                         </svg>
                                     </button>
                                 </div>
 
-                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                                    <div class="lg:col-span-2">
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                                            Question Text <span class="text-red-500">*</span>
-                                        </label>
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                                    <div class="lg:col-span-2 space-y-1">
+                                        <label class="block text-sm font-medium text-gray-700">Question Text <span class="text-red-500">*</span></label>
                                         <input type="text"
                                                name="questions[{{ $index }}][text]"
                                                value="{{ $question['text'] ?? '' }}"
-                                               class="form-input w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                               class="form-input w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:ring-1 focus:ring-blue-500"
                                                placeholder="Enter your question here"
                                                required>
                                     </div>
 
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                                            Question Type <span class="text-red-500">*</span>
-                                        </label>
+                                    <div class="space-y-1">
+                                        <label class="block text-sm font-medium text-gray-700">Type <span class="text-red-500">*</span></label>
                                         <select name="questions[{{ $index }}][type]"
-                                                class="question-type form-select w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                            <option value="mcq" {{ ($question['type'] ?? '') === 'mcq' ? 'selected' : '' }}>Multiple Choice</option>
+                                                class="question-type form-select w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:ring-1 focus:ring-blue-500">
+                                            <option value="mcq" {{ ($question['type'] ?? '') === 'mcq' ? 'selected' : '' }}>Multiple Choice (4 options)</option>
                                             <option value="true_false" {{ ($question['type'] ?? '') === 'true_false' ? 'selected' : '' }}>True/False</option>
                                         </select>
                                     </div>
@@ -186,17 +162,15 @@
                 </div>
 
                 <button type="button" id="add-question"
-                        class="mt-4 bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-600 transition-colors flex items-center">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="mt-3 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors flex items-center text-sm">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                     </svg>
                     Add Question
                 </button>
 
                 @if($errors->has('questions.*'))
-                    <div class="mt-4 text-red-600 text-sm">
-                        Please check the questions section for validation errors.
-                    </div>
+                    <div class="mt-2 text-red-600 text-sm">Please check the questions section for validation errors.</div>
                 @endif
             </div>
 
@@ -243,84 +217,75 @@
             if (questionType === 'mcq') {
                 // Multiple Choice: 4 separate input fields
                 const options = existingOptions || ['', '', '', ''];
-                const optionLabels = ['Option A', 'Option B', 'Option C', 'Option D'];
+                const optionLabels = ['A', 'B', 'C', 'D'];
 
-                optionsHtml += '<div class="space-y-3">';
+                optionsHtml += '<div class="space-y-2">';
                 optionsHtml += '<label class="block text-sm font-medium text-gray-700">Answer Options</label>';
 
                 for (let i = 0; i < 4; i++) {
                     const optionValue = options[i] || '';
-                    const isChecked = correctAnswer === optionValue && optionValue ? 'checked' : '';
+                    const isChecked = correctAnswer == i ? 'checked' : '';
 
                     optionsHtml += `
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-2">
                             <input type="radio"
                                    name="questions[${questionIndex}][correct_answer]"
-                                   value="${optionValue || `option_${i}`}"
-                                   class="option-radio-${i} form-radio text-blue-600"
+                                   value="${i}"
+                                   class="option-radio-${i} form-radio text-blue-600 h-4 w-4"
                                    data-option-index="${i}"
                                    ${isChecked}
                                    required
                                    ${optionValue ? '' : 'disabled'}>
-                            <label class="flex-1">
-                                <span class="text-sm font-medium text-gray-700">${optionLabels[i]}</span>
-                                <input type="text"
-                                       name="questions[${questionIndex}][options][${i}]"
-                                       value="${optionValue}"
-                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 option-input-${i}"
-                                       placeholder="Enter option ${String.fromCharCode(65 + i)}"
-                                       required>
-                            </label>
+                            <span class="text-sm font-medium text-gray-700 w-8">${optionLabels[i]}</span>
+                            <input type="text"
+                                   name="questions[${questionIndex}][options][${i}]"
+                                   value="${optionValue}"
+                                   class="flex-1 px-2 py-1 border border-gray-300 rounded shadow-sm focus:ring-1 focus:ring-blue-500 option-input-${i}"
+                                   placeholder="Enter option ${String.fromCharCode(65 + i)}"
+                                   required>
                         </div>
                     `;
                 }
-                optionsHtml += '<p class="text-xs text-gray-500 mt-2">Select the correct answer by clicking the radio button next to it.</p>';
+                optionsHtml += '<p class="text-xs text-gray-500 mt-1">Select correct answer with radio button</p>';
                 optionsHtml += '</div>';
             } else if (questionType === 'true_false') {
                 // True/False: 2 locked inputs with "True" and "False"
-                const trueChecked = correctAnswer === 'True' ? 'checked' : '';
-                const falseChecked = correctAnswer === 'False' ? 'checked' : '';
+                const trueChecked = correctAnswer == 0 ? 'checked' : '';
+                const falseChecked = correctAnswer == 1 ? 'checked' : '';
 
-                optionsHtml += '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
-                optionsHtml += '<label class="block text-sm font-medium text-gray-700 mb-2">Correct Answer</label>';
+                optionsHtml += '<div class="space-y-2">';
+                optionsHtml += '<label class="block text-sm font-medium text-gray-700">Correct Answer</label>';
+                optionsHtml += '<div class="flex gap-4">';
 
                 // True option
                 optionsHtml += `
-                    <div class="border border-gray-300 rounded-lg p-4 bg-white">
-                        <label class="flex items-center cursor-pointer">
-                            <input type="radio"
-                                   name="questions[${questionIndex}][correct_answer]"
-                                   value="True"
-                                   class="form-radio text-blue-600 mr-3"
-                                   ${trueChecked}
-                                   required>
-                            <div>
-                                <div class="font-medium text-gray-900">True</div>
-                                <input type="hidden" name="questions[${questionIndex}][options][0]" value="True">
-                            </div>
-                        </label>
-                    </div>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="radio"
+                               name="questions[${questionIndex}][correct_answer]"
+                               value="0"
+                               class="form-radio text-blue-600 mr-2 h-4 w-4"
+                               ${trueChecked}
+                               required>
+                        <span class="text-sm font-medium text-gray-900">True</span>
+                        <input type="hidden" name="questions[${questionIndex}][options][0]" value="True">
+                    </label>
                 `;
 
                 // False option
                 optionsHtml += `
-                    <div class="border border-gray-300 rounded-lg p-4 bg-white">
-                        <label class="flex items-center cursor-pointer">
-                            <input type="radio"
-                                   name="questions[${questionIndex}][correct_answer]"
-                                   value="False"
-                                   class="form-radio text-red-600 mr-3"
-                                   ${falseChecked}
-                                   required>
-                            <div>
-                                <div class="font-medium text-red-900">False</div>
-                                <input type="hidden" name="questions[${questionIndex}][options][1]" value="False">
-                            </div>
-                        </label>
-                    </div>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="radio"
+                               name="questions[${questionIndex}][correct_answer]"
+                               value="1"
+                               class="form-radio text-red-600 mr-2 h-4 w-4"
+                               ${falseChecked}
+                               required>
+                        <span class="text-sm font-medium text-gray-900">False</span>
+                        <input type="hidden" name="questions[${questionIndex}][options][1]" value="False">
+                    </label>
                 `;
 
-                optionsHtml += '</div>';
+                optionsHtml += '</div></div>';
             }
 
             return optionsHtml;
@@ -336,7 +301,7 @@
 
                     if (optionInput && optionRadio) {
                         const optionValue = optionInput.value.trim();
-                        optionRadio.value = optionValue || `option_${i}`;
+                        optionRadio.value = i; // Always use the index as value
                         optionRadio.disabled = !optionValue;
 
                         // If the radio was checked but option is empty, uncheck it
@@ -359,65 +324,57 @@
         function addQuestion(qIndex, questionType, questionText = '', existingOptions = null, correctAnswer = null, questionThumbnail = '', timeLimit = '') {
             const isTimed = document.getElementById('is_timed').checked;
             const timeLimitHtml = isTimed ? `
-                <div class="time-limit-container">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Time Limit (seconds)
-                    </label>
+                <div class="time-limit-container space-y-1">
+                    <label class="block text-sm font-medium text-gray-700">Time Limit (sec)</label>
                     <input type="number"
                            name="questions[${qIndex}][time_limit]"
                            value="${timeLimit || 30}"
                            min="1"
-                           class="form-input w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                           class="form-input w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:ring-1 focus:ring-blue-500"
                            placeholder="30">
-                    <p class="text-xs text-gray-500 mt-1">Time allowed for this question in seconds.</p>
+                    <p class="text-xs text-gray-500">Time in seconds</p>
                 </div>
             ` : '';
 
             const questionHtml = `
-                <div class="question-item border border-gray-200 rounded-lg p-4 bg-gray-50" data-question-index="${qIndex}">
-                    <div class="flex justify-between items-start mb-4">
-                        <h4 class="font-medium">Question ${parseInt(qIndex) + 1}</h4>
-                        <button type="button" class="remove-question text-red-500 hover:text-red-700 transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="question-item border border-gray-200 rounded p-3 bg-gray-50" data-question-index="${qIndex}">
+                    <div class="flex justify-between items-start mb-3">
+                        <h4 class="font-medium text-sm">Question ${parseInt(qIndex) + 1}</h4>
+                        <button type="button" class="remove-question text-red-500 hover:text-red-700 p-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                             </svg>
                         </button>
                     </div>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="lg:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Question Text <span class="text-red-500">*</span>
-                            </label>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                        <div class="lg:col-span-2 space-y-1">
+                            <label class="block text-sm font-medium text-gray-700">Question Text <span class="text-red-500">*</span></label>
                             <input type="text"
                                    name="questions[${qIndex}][text]"
                                    value="${questionText}"
-                                   class="form-input w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                   class="form-input w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:ring-1 focus:ring-blue-500"
                                    placeholder="Enter your question here"
                                    required>
                         </div>
 
-                        <div class="lg:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Question Thumbnail
-                            </label>
+                        <div class="lg:col-span-2 space-y-1">
+                            <label class="block text-sm font-medium text-gray-700">Question Thumbnail</label>
                             <input type="file"
                                    name="questions[${qIndex}][thumbnail]"
                                    accept="image/*"
                                    data-question-index="${qIndex}"
-                                   class="question-thumbnail form-input w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <div class="question-thumbnail-preview-${qIndex} mt-2 hidden">
-                                <img class="question-thumbnail-image-${qIndex} max-w-xs max-h-32 object-cover rounded-md border border-gray-300" alt="Question thumbnail preview">
+                                   class="question-thumbnail form-input w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:ring-1 focus:ring-blue-500">
+                            <div class="question-thumbnail-preview-${qIndex} mt-1 hidden">
+                                <img class="question-thumbnail-image-${qIndex} max-w-24 max-h-16 object-cover rounded border border-gray-300" alt="Question thumbnail">
                             </div>
-                            <p class="text-xs text-gray-500 mt-1">Optional thumbnail image for this question (max 2MB, JPG/PNG/GIF).</p>
+                            <p class="text-xs text-gray-500">Optional image (max 2MB)</p>
                         </div>
 
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Question Type <span class="text-red-500">*</span>
-                            </label>
+                        <div class="space-y-1">
+                            <label class="block text-sm font-medium text-gray-700">Type <span class="text-red-500">*</span></label>
                             <select name="questions[${qIndex}][type]"
-                                    class="question-type form-select w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    class="question-type form-select w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:ring-1 focus:ring-blue-500">
                                 <option value="mcq" ${questionType === 'mcq' ? 'selected' : ''}>Multiple Choice (4 options)</option>
                                 <option value="true_false" ${questionType === 'true_false' ? 'selected' : ''}>True/False (2 options)</option>
                             </select>

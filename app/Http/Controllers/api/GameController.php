@@ -18,9 +18,13 @@ use Illuminate\Support\Facades\Log;
 
 class GameController extends Controller
 {
-    public function createSession()
+    public function createSession(Request $request)
     {
-        $gameId = 4; // أو أي معرف لعبة آخر حسب حاجتك
+        //validate game id
+         $request->validate([
+            'gameId' => 'required|integer|exists:games,id',
+        ]);
+        $gameId = $request->input('gameId');
         do {
             $code = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
         } while (GameSession::where('code', $code)->exists());

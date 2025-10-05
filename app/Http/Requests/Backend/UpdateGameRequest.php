@@ -40,8 +40,8 @@ class UpdateGameRequest extends FormRequest
             // Options validation based on question type
             'questions.*.options' => 'required|array',
             'questions.*.options.*' => 'nullable|string|max:255',
-            // Correct answer validation
-            'questions.*.correct_answer' => 'required|string|max:255',
+            // Correct answer validation - now storing index
+            'questions.*.correct_answer' => 'required|integer|min:0',
             'questions.*.thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'questions.*.time_limit' => 'nullable|integer|min:1',
         ];
@@ -71,11 +71,11 @@ class UpdateGameRequest extends FormRequest
 
                     if (count($nonEmptyOptions) !== 4) {
                         $validator->errors()->add("questions.{$index}.options", 'Multiple choice questions must have exactly 4 options.');
-                    }
-
-                    // Correct answer must match one of the options
-                    if (!empty($correctAnswer) && !in_array($correctAnswer, $nonEmptyOptions)) {
-                        $validator->errors()->add("questions.{$index}.correct_answer", 'The correct answer must match one of the provided options.');
+                    } else {
+                        // Correct answer must be a valid index within the options
+                        if (!is_numeric($correctAnswer) || $correctAnswer < 0 || $correctAnswer >= count($nonEmptyOptions)) {
+                            $validator->errors()->add("questions.{$index}.correct_answer", 'The correct answer index must be valid (0-' . (count($nonEmptyOptions) - 1) . ').');
+                        }
                     }
 
                 } elseif ($type === 'true_false') {
@@ -84,11 +84,11 @@ class UpdateGameRequest extends FormRequest
                         !isset($options[0]) || !isset($options[1]) ||
                         trim($options[0]) !== 'True' || trim($options[1]) !== 'False') {
                         $validator->errors()->add("questions.{$index}.options", 'True/False questions must have exactly 2 options: True and False.');
-                    }
-
-                    // Correct answer must be either True or False
-                    if (!in_array($correctAnswer, ['True', 'False'])) {
-                        $validator->errors()->add("questions.{$index}.correct_answer", 'For True/False questions, the correct answer must be either "True" or "False".');
+                    } else {
+                        // Correct answer must be 0 or 1 for True/False
+                        if (!in_array($correctAnswer, [0, 1])) {
+                            $validator->errors()->add("questions.{$index}.correct_answer", 'For True/False questions, the correct answer index must be 0 (True) or 1 (False).');
+                        }
                     }
                 }
             }
