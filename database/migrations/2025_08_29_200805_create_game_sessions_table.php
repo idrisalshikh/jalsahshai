@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('game_id')->constrained()->onDelete('cascade');
             $table->string('code')->unique();
             $table->enum('status', ['waiting', 'started', 'finished'])->default('waiting');
+            $table->integer('current_question_index')->default(0);
             $table->unsignedBigInteger('host_id')->nullable();
             $table->timestamps();
         });

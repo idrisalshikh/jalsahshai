@@ -18,6 +18,8 @@ return new class extends Migration
             $table->enum('type', ['mcq', 'true_false']);
             $table->json('options')->nullable(); // For MCQ
             $table->string('correct_answer'); // Storing correct index or 'true'/'false'
+            $table->string('thumbnail')->nullable();
+            $table->integer('time_limit')->nullable();
             $table->timestamps();
         });
     }

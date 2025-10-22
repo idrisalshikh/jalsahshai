@@ -255,6 +255,46 @@ class AdminController extends Controller
     }
 
     /**
+     * Toggle the visibility status of the specified game
+     *
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function toggleVisibility($id)
+    {
+        try {
+            $game = Game::findOrFail($id);
+
+            // Toggle the visibility status
+            $game->visable = !$game->visable;
+            $game->updated_by = Auth::id();
+            $game->save();
+
+            $status = $game->visable ? 'visible' : 'hidden';
+            Log::info('Game visibility toggled', [
+                'game_id' => $game->id,
+                'game_name' => $game->name,
+                'new_visibility' => $status,
+                'updated_by' => Auth::id()
+            ]);
+
+            return redirect()
+                ->back()
+                ->with('success', 'Game "' . $game->name . '" is now ' . $status . '.');
+        } catch (\Exception $e) {
+            Log::error('Error toggling game visibility: ' . $e->getMessage(), [
+                'exception' => $e,
+                'game_id' => $id,
+                'user_id' => Auth::id()
+            ]);
+
+            return redirect()
+                ->back()
+                ->with('error', 'Failed to toggle game visibility. Please try again.');
+        }
+    }
+
+    /**
      * Soft delete the specified game from storage
      * Checks if game has active sessions before deletion
      *

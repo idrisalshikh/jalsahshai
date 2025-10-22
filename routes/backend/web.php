@@ -8,4 +8,5 @@ Route::get('/games/create', [AdminController::class, 'create'])->name('admin.gam
 Route::post('/games', [AdminController::class, 'store'])->name('admin.games.store');
 Route::get('/games/{id}/edit', [AdminController::class, 'edit'])->name('admin.games.edit');
 Route::put('/games/{id}', [AdminController::class, 'update'])->name('admin.games.update');
+Route::patch('/games/{id}/toggle-visibility', [AdminController::class, 'toggleVisibility'])->name('admin.games.toggle-visibility');
 Route::delete('/games/{id}', [AdminController::class, 'destroy'])->name('admin.games.destroy');

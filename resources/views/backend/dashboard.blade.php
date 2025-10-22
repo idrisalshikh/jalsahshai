@@ -71,10 +71,12 @@
             <thead class="bg-gray-50">
                 <tr>
                     <th class="py-3 px-4 border-b font-medium text-left">id</th>
+                    <th class="py-3 px-4 border-b font-medium text-center">Thumbnail</th>
                     <th class="py-3 px-4 border-b font-medium text-left">Name</th>
                     <th class="py-3 px-4 border-b font-medium text-left">Description</th>
                     <th class="py-3 px-4 border-b font-medium text-center">Questions</th>
                     <th class="py-3 px-4 border-b font-medium text-center">Status</th>
+                    <th class="py-3 px-4 border-b font-medium text-center">Visible</th>
                     <th class="py-3 px-4 border-b font-medium text-center">Created/Updated</th>
                     <th class="py-3 px-4 border-b font-medium text-center">Actions</th>
                 </tr>
@@ -83,6 +85,17 @@
                 @forelse ($games as $game)
                     <tr class="hover:bg-gray-50">
                         <td class="py-3 px-4 border-b">{{ $game->id }}</td>
+                        <td class="py-3 px-4 border-b text-center">
+                            @if($game->thumbnail)
+                                <img src="{{ Storage::url($game->thumbnail) }}"
+                                     alt="{{ $game->name }} thumbnail"
+                                     class="w-16 h-12 object-cover rounded border border-gray-300 mx-auto">
+                            @else
+                                <div class="w-16 h-12 bg-gray-200 rounded border border-gray-300 flex items-center justify-center mx-auto">
+                                    <span class="text-xs text-gray-500">No Image</span>
+                                </div>
+                            @endif
+                        </td>
                         <td class="py-3 px-4 border-b">
                             <div>
                                 <div class="font-medium">{{ $game->name }}</div>
@@ -112,6 +125,17 @@
                                 </span>
                             @endif
                         </td>
+                        <td class="py-3 px-4 border-b text-center">
+                            @if($game->visable)
+                                <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                                    Yes
+                                </span>
+                            @else
+                                <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">
+                                    No
+                                </span>
+                            @endif
+                        </td>
                         <td class="py-3 px-4 border-b text-center text-sm">
                             <div class="text-gray-600">Created: {{ $game->created_at->format('M j, Y') }}</div>
                             @if($game->updated_at != $game->created_at)
@@ -124,6 +148,16 @@
                                    class="text-blue-600 hover:text-blue-800 px-3 py-1 rounded text-sm bg-blue-50 hover:bg-blue-100 transition-colors">
                                     Edit
                                 </a>
+                                <form action="{{ route('admin.games.toggle-visibility', $game->id) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit"
+                                            class="px-3 py-1 rounded text-sm transition-colors {{ $game->visable
+                                                ? 'text-orange-600 hover:text-orange-800 bg-orange-50 hover:bg-orange-100'
+                                                : 'text-green-600 hover:text-green-800 bg-green-50 hover:bg-green-100' }}">
+                                        {{ $game->visable ? 'Hide' : 'Show' }}
+                                    </button>
+                                </form>
                                 <form action="{{ route('admin.games.destroy', $game->id) }}" method="POST" class="inline"
                                       onsubmit="return confirm('Are you sure you want to delete this game? This action cannot be undone.')">
                                     @csrf
@@ -143,7 +177,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="py-8 px-4 border-b text-center text-gray-500">
+                        <td colspan="9" class="py-8 px-4 border-b text-center text-gray-500">
                             @if($search)
                                 No games found matching your search criteria.
                             @else
