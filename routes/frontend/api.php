@@ -9,13 +9,14 @@ use Illuminate\Support\Facades\Route;
 // Player API
 Route::get('/players/{id}', [PlayerApiController::class, 'show']);
 Route::get('/games',function() {
-    $games=Game::with('questions')->get()->map(function($game) {
+    $games=Game::with('questions')->orderBy("id",'desc')->get()->map(function($game) {
         return [
             'id' => $game->id,
             'title' => $game->name,
             'description' => $game->description,
-            'thumbnail' => $game->thumbnail ? asset('storage/' . $game->thumbnail) : null,
-            'video' => ["id"=>0,"url"=>$game->video_url?:""],
+            'image' => $game->thumbnail ? asset('storage/' . $game->thumbnail) : "",
+           'video' => ["id"=>0,"url"=>$game->video_url?:""],
+            'youtube_embed_url' => $game->video_url ? "https://www.youtube.com/embed/{$game->video_url}" : "",
             'is_timed' => $game->is_timed,
             'questions' => $game->questions->map(function($question) {
                 return [

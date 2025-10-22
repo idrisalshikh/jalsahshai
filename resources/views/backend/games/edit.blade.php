@@ -42,7 +42,7 @@
                     <span class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded text-xs font-medium">1</span>
                     <span class="ml-2">Game Info</span>
                 </h2>
-
+                
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="md:col-span-2 space-y-1">
                         <label for="name" class="block text-sm font-medium text-gray-700">Game Name <span class="text-red-500">*</span></label>
@@ -83,13 +83,15 @@
                     </div>
 
                     <div class="space-y-1">
-                        <label for="video_url" class="block text-sm font-medium text-gray-700">Video URL</label>
-                        <input type="url"
+                        <label for="video_url" class="block text-sm font-medium text-gray-700">YouTube Video ID</label>
+                        <input type="text"
                                name="video_url"
                                id="video_url"
                                value="{{ old('video_url', $game->video_url) }}"
                                class="form-input w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:ring-1 focus:ring-blue-500 @error('video_url') border-red-500 @enderror"
-                               placeholder="https://example.com/video.mp4">
+                               placeholder="dQw4w9WgXcQ"
+                               pattern="[a-zA-Z0-9_-]{11}"
+                               maxlength="11">
                         @error('video_url')<p class="text-sm text-red-600">{{ $message }}</p>@enderror
                         <p class="text-xs text-gray-500">Optional intro video</p>
                     </div>
@@ -150,7 +152,7 @@
                                         <select name="questions[{{ $index }}][type]"
                                                 class="question-type form-select w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:ring-1 focus:ring-blue-500">
                                             <option value="mcq" {{ ($question['type'] ?? '') === 'mcq' ? 'selected' : '' }}>Multiple Choice (4 options)</option>
-                                            <option value="true_false" {{ ($question['type'] ?? '') === 'true_false' ? 'selected' : '' }}>True/False</option>
+                                            <option value="true_false" {{ ($question['type'] ?? '') === 'true_false' ? 'selected' : '' }}>صح/خطاء</option>
                                         </select>
                                     </div>
 
@@ -204,7 +206,7 @@
                                         <select name="questions[{{ $index }}][type]"
                                                 class="question-type form-select w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:ring-1 focus:ring-blue-500">
                                             <option value="mcq" {{ $question->type == 'mcq' ? 'selected' : '' }}>Multiple Choice (4 options)</option>
-                                            <option value="true_false" {{ $question->type == 'true_false' ? 'selected' : '' }}>True/False (2 options)</option>
+                                            <option value="true_false" {{ $question->type == 'true_false' ? 'selected' : '' }}>صح/خطاء (2 options)</option>
                                         </select>
                                     </div>
 
@@ -265,8 +267,8 @@
                                                                class="form-radio text-blue-600 mr-2 h-4 w-4"
                                                                {{ $question->correct_answer == 0 ? 'checked' : '' }}
                                                                required>
-                                                        <span class="text-sm font-medium text-gray-900">True</span>
-                                                        <input type="hidden" name="questions[{{ $index }}][options][0]" value="True">
+                                                        <span class="text-sm font-medium text-gray-900">صح</span>
+                                                        <input type="hidden" name="questions[{{ $index }}][options][0]" value="صح">
                                                     </label>
                                                     <label class="flex items-center cursor-pointer">
                                                         <input type="radio"
@@ -275,8 +277,8 @@
                                                                class="form-radio text-red-600 mr-2 h-4 w-4"
                                                                {{ $question->correct_answer == 1 ? 'checked' : '' }}
                                                                required>
-                                                        <span class="text-sm font-medium text-gray-900">False</span>
-                                                        <input type="hidden" name="questions[{{ $index }}][options][1]" value="False">
+                                                        <span class="text-sm font-medium text-gray-900">خطاء</span>
+                                                        <input type="hidden" name="questions[{{ $index }}][options][1]" value="خطاء">
                                                     </label>
                                                 </div>
                                             </div>
@@ -396,8 +398,8 @@
                                    ${trueChecked}
                                    required>
                             <div>
-                                <div class="font-medium text-gray-900">True</div>
-                                <input type="hidden" name="questions[${questionIndex}][options][0]" value="True">
+                                <div class="font-medium text-gray-900">صح</div>
+                                <input type="hidden" name="questions[${questionIndex}][options][0]" value="صح">
                             </div>
                         </label>
                     </div>
@@ -414,8 +416,8 @@
                                    ${falseChecked}
                                    required>
                             <div>
-                                <div class="font-medium text-red-900">False</div>
-                                <input type="hidden" name="questions[${questionIndex}][options][1]" value="False">
+                                <div class="font-medium text-red-900">خطاء</div>
+                                <input type="hidden" name="questions[${questionIndex}][options][1]" value="خطاء">
                             </div>
                         </label>
                     </div>
@@ -520,7 +522,7 @@
                             <select name="questions[${qIndex}][type]"
                                     class="question-type form-select w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                 <option value="mcq" ${questionType === 'mcq' ? 'selected' : ''}>Multiple Choice (4 options)</option>
-                                <option value="true_false" ${questionType === 'true_false' ? 'selected' : ''}>True/False (2 options)</option>
+                                <option value="true_false" ${questionType === 'true_false' ? 'selected' : ''}>صح/خطاء (2 options)</option>
                             </select>
                         </div>
 

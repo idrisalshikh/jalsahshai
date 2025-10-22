@@ -23,6 +23,11 @@ class Question extends Model
         'options' => 'array',
     ];
 
+    public function game()
+    {
+        return $this->belongsTo(Game::class);
+    }
+
     public function gameSessions()
     {
         return $this->belongsToMany(GameSession::class, 'game_session_question')

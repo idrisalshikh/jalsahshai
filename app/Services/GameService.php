@@ -49,7 +49,7 @@ class GameService
                             }
                         }
 
-                        $question = Question::create([
+                        Question::create([
                             "game_id" => $game->id,
                             'text' => $questionData['text'],
                             'type' => $questionData['type'],
@@ -58,7 +58,6 @@ class GameService
                             'thumbnail' => $questionData['thumbnail'] ?? null,
                             'time_limit' => $questionData['time_limit'] ?? null,
                         ]);
-                        $game->questions()->attach($question->id);
                     }
                 }
 
@@ -121,9 +120,11 @@ class GameService
                                     'thumbnail' => $questionData['thumbnail'] ?? null,
                                     'time_limit' => $questionData['time_limit'] ?? null,
                                 ]);
+                                $questionIds[] = $question->id;
                             }
                         } else {
                             $question = Question::create([
+                                "game_id" => $game->id,
                                 'text' => $questionData['text'],
                                 'type' => $questionData['type'],
                                 'options' => $options,
@@ -131,12 +132,13 @@ class GameService
                                 'thumbnail' => $questionData['thumbnail'] ?? null,
                                 'time_limit' => $questionData['time_limit'] ?? null,
                             ]);
+                            $questionIds[] = $question->id;
                         }
-                        $questionIds[] = $question->id ?? $question->getKey();
                     }
                 }
 
-                $game->questions()->sync($questionIds);
+                // Delete questions that are no longer in the updated list
+                $game->questions()->whereNotIn('id', $questionIds)->delete();
 
                 return $game->fresh(['questions']);
             });

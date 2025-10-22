@@ -51,16 +51,16 @@ class AdminController extends Controller
     {
         try {
             $search = $request->input('search');
-            $sortBy = $request->input('sort_by', 'created_at');
+            $sortBy = $request->input('sort_by', 'id');
             $sortDirection = $request->input('sort_direction', 'desc');
-            $perPage = $request->input('per_page', 15);
+            $perPage = $request->input('per_page', 150);
 
             $games = Game::with(['questions', 'creator', 'updater'])
-                ->search($search)
-                ->sortBy($sortBy, $sortDirection)
-                ->paginate($perPage)
+                 ->search($search)
+                ->sortBy($sortBy, $sortDirection)                
+                 ->paginate($perPage)
                 ->withQueryString();
-
+            
             return view('backend.dashboard', compact('games', 'search', 'sortBy', 'sortDirection'));
         } catch (\Exception $e) {
             Log::error('Error loading games list: ' . $e->getMessage(), [

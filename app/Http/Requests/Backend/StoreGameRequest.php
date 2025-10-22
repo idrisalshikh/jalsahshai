@@ -24,7 +24,7 @@ class StoreGameRequest extends FormRequest
         return [
             'name' => 'required|string|max:255|unique:games,name',
             'description' => 'nullable|string|max:1000',
-            'video_url' => 'nullable|url|max:500',
+            'video_url' => 'nullable|string|regex:/^[a-zA-Z0-9_-]{11}$/|max:11',
             'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_timed' => 'boolean',
             'questions' => 'required|array|min:1',
@@ -100,8 +100,8 @@ class StoreGameRequest extends FormRequest
             'name.unique' => 'A game with this name already exists. Please choose a different name.',
             'name.max' => 'The game name cannot exceed 255 characters.',
             'description.max' => 'The description cannot exceed 1000 characters.',
-            'video_url.url' => 'Please provide a valid URL for the video.',
-            'video_url.max' => 'The video URL cannot exceed 500 characters.',
+            'video_url.regex' => 'Please provide a valid YouTube video ID (11 characters, letters, numbers, underscores, and hyphens only).',
+            'video_url.max' => 'The YouTube video ID must be exactly 11 characters.',
             'questions.min' => 'Please add at least one question to the game.',
             'questions.*.text.required' => 'Each question must have text.',
             'questions.*.text.max' => 'Question text cannot exceed 500 characters.',
@@ -123,7 +123,7 @@ class StoreGameRequest extends FormRequest
         return [
             'name' => 'game name',
             'description' => 'game description',
-            'video_url' => 'video URL',
+            'video_url' => 'YouTube video ID',
             'questions.*.text' => 'question text',
             'questions.*.type' => 'question type',
             'questions.*.options' => 'question options',

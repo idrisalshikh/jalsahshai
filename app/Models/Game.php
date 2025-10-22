@@ -26,7 +26,7 @@ class Game extends Model
      */
     public function questions()
     {
-        return $this->belongsToMany(Question::class, 'game_question');
+        return $this->hasMany(Question::class);
     }
 
     /**

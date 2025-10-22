@@ -21,7 +21,23 @@
             </div>
         </div>
         <div>
-            <video id="jvideo" width="100%" controls src="{{ $session->game->video_url }}"></video>
+            @if($session->game->video_url)
+                <div class="aspect-video bg-black rounded-lg overflow-hidden">
+                    <iframe
+                        width="100%"
+                        height="100%"
+                        src="https://www.youtube.com/embed/{{ $session->game->video_url }}"
+                        title="Intro Video"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            @else
+                <div class="aspect-video bg-gray-200 rounded-lg flex items-center justify-center">
+                    <p class="text-gray-500 text-lg">No intro video available</p>
+                </div>
+            @endif
             <form action="{{ route('host.start', $session->code) }}" method="POST" class="mt-4">
                 @csrf
                 <button type="submit" class="bg-green-500 text-white w-full px-6 py-3 rounded hover:bg-green-600">Start Game</button>

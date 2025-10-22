@@ -81,13 +81,15 @@
                     </div>
 
                     <div class="space-y-1">
-                        <label for="video_url" class="block text-sm font-medium text-gray-700">Video URL</label>
-                        <input type="url"
+                        <label for="video_url" class="block text-sm font-medium text-gray-700">YouTube Video ID</label>
+                        <input type="text"
                                name="video_url"
                                id="video_url"
                                value="{{ old('video_url') }}"
                                class="form-input w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:ring-1 focus:ring-blue-500 @error('video_url') border-red-500 @enderror"
-                               placeholder="https://example.com/video.mp4">
+                               placeholder="dQw4w9WgXcQ"
+                               pattern="[a-zA-Z0-9_-]{11}"
+                               maxlength="11">
                         @error('video_url')<p class="text-sm text-red-600">{{ $message }}</p>@enderror
                         <p class="text-xs text-gray-500">Optional intro video</p>
                     </div>

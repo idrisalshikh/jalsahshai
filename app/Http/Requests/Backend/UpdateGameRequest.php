@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Backend;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class UpdateGameRequest extends FormRequest
@@ -22,6 +23,7 @@ class UpdateGameRequest extends FormRequest
      */
     public function rules(): array
     {
+        Log::info('UpdateGameRequest rules called for game ID: ' . $this->route('id'));
         return [
             'name' => [
                 'required',
@@ -30,7 +32,7 @@ class UpdateGameRequest extends FormRequest
                 Rule::unique('games', 'name')->ignore($this->route('id'))
             ],
             'description' => 'nullable|string|max:1000',
-            'video_url' => 'nullable|url|max:500',
+            'video_url' => 'nullable|string|regex:/^[a-zA-Z0-9_-]{11}$/|max:11',
             'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_timed' => 'boolean',
             'questions' => 'required|array|min:1',
@@ -82,12 +84,12 @@ class UpdateGameRequest extends FormRequest
                     // True/False requires exactly 2 options: True and False in that order
                     if (count($options) !== 2 ||
                         !isset($options[0]) || !isset($options[1]) ||
-                        trim($options[0]) !== 'True' || trim($options[1]) !== 'False') {
-                        $validator->errors()->add("questions.{$index}.options", 'True/False questions must have exactly 2 options: True and False.');
+                        trim($options[0]) !== 'صح' || trim($options[1]) !== 'خطاء') {
+                        $validator->errors()->add("questions.{$index}.options", 'صح/خطاء سوال يجب ان يكون اماء صح أو خطاء .');
                     } else {
                         // Correct answer must be 0 or 1 for True/False
                         if (!in_array($correctAnswer, [0, 1])) {
-                            $validator->errors()->add("questions.{$index}.correct_answer", 'For True/False questions, the correct answer index must be 0 (True) or 1 (False).');
+                            $validator->errors()->add("questions.{$index}.correct_answer", 'حدد الجوالب الصحيح اما صح أو خطاء.');
                         }
                     }
                 }
@@ -107,8 +109,8 @@ class UpdateGameRequest extends FormRequest
             'name.unique' => 'A game with this name already exists. Please choose a different name.',
             'name.max' => 'The game name cannot exceed 255 characters.',
             'description.max' => 'The description cannot exceed 1000 characters.',
-            'video_url.url' => 'Please provide a valid URL for the video.',
-            'video_url.max' => 'The video URL cannot exceed 500 characters.',
+            'video_url.regex' => 'Please provide a valid YouTube video ID (11 characters, letters, numbers, underscores, and hyphens only).',
+            'video_url.max' => 'The YouTube video ID must be exactly 11 characters.',
             'questions.min' => 'Please add at least one question to the game.',
             'questions.*.id.exists' => 'One or more questions do not exist.',
             'questions.*.text.required' => 'Each question must have text.',
@@ -131,7 +133,7 @@ class UpdateGameRequest extends FormRequest
         return [
             'name' => 'game name',
             'description' => 'game description',
-            'video_url' => 'video URL',
+            'video_url' => 'YouTube video ID',
             'questions.*.text' => 'question text',
             'questions.*.type' => 'question type',
             'questions.*.options' => 'question options',

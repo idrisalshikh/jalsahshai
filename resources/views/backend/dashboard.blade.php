@@ -38,6 +38,7 @@
                 </div>
                 <div class="flex gap-2">
                     <select name="sort_by" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="id" {{ ($sortBy ?? 'id') === 'id' ? 'selected' : '' }}>Sort by Id </option>
                         <option value="created_at" {{ ($sortBy ?? 'created_at') === 'created_at' ? 'selected' : '' }}>Sort by Created Date</option>
                         <option value="updated_at" {{ ($sortBy ?? 'created_at') === 'updated_at' ? 'selected' : '' }}>Sort by Updated Date</option>
                         <option value="name" {{ ($sortBy ?? 'created_at') === 'name' ? 'selected' : '' }}>Sort by Name</option>

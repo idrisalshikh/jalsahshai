@@ -33,12 +33,12 @@ class AdminControllerTest extends TestCase
         $data = [
             'name' => 'New Game',
             'description' => 'A new game description.',
-            'video_url' => 'http://example.com/video.mp4',
+            'video_url' => 'dQw4w9WgXcQ', // Valid YouTube video ID
             'questions' => [
                 [
                     'text' => 'Question 1',
                     'type' => 'mcq',
-                    'options' => 'A,B,C',
+                    'options' => ['Option A', 'Option B', 'Option C', 'Option D'],
                     'correct_answer' => '0',
                 ],
             ],
@@ -59,13 +59,13 @@ class AdminControllerTest extends TestCase
         $data = [
             'name' => 'Updated Game',
             'description' => 'An updated description.',
-            'video_url' => 'http://example.com/new-video.mp4',
+            'video_url' => 'x4YhdUNTT8I', // Valid YouTube video ID
             'questions' => [
                 [
                     'id' => $question->id,
                     'text' => 'Updated Question',
                     'type' => 'mcq',
-                    'options' => 'X,Y,Z',
+                    'options' => ['Updated Option X', 'Updated Option Y', 'Updated Option Z', 'Updated Option W'],
                     'correct_answer' => '1',
                 ],
             ],
@@ -85,6 +85,6 @@ class AdminControllerTest extends TestCase
         $response = $this->delete(route('admin.games.destroy', $game->id));
 
         $response->assertRedirect(route('admin.index'));
-        $this->assertDatabaseMissing('games', ['id' => $game->id]);
+        $this->assertSoftDeleted($game);
     }
 }
